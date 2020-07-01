@@ -1,0 +1,50 @@
+{
+  "name": "sashalenz/wiretable",
+  "description": "Code-Driven Table Implementation on Livewire",
+  "homepage": "https://github.com/sashalenz/wiretable",
+  "keywords": [
+    "livewire",
+    "table",
+    "sorting",
+    "searching",
+    "wiretable",
+    "datatables"
+  ],
+  "authors": [
+    {
+      "name": "Petrovskyi Oleksandr",
+      "email": "sashalenz@gmail.com",
+      "homepage": "https://github.com/sashalenz",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "illuminate/config": "^7.18",
+    "illuminate/database": "^7.18",
+    "illuminate/support": "^7.18",
+    "livewire/livewire": "^1.2",
+    "spatie/laravel-query-builder": "^2.8"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sashalenz\\Wiretable\\": "src"
+    }
+  },
+  "license": "MIT",
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Sashalenz\\Wiretable\\WiretableServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

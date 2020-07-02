@@ -35,9 +35,9 @@ trait WithSorting
 
     private function getAllowedSorts(): array
     {
-        return $this->fields()
-            ->filter(fn(Column $field) => $field->isSortable())
-            ->map(fn(Column $field) => $field->getName())
+        return $this->columns()
+            ->filter(fn(Column $column) => $column->isSortable())
+            ->map(fn(Column $column) => $column->getName())
             ->values()
             ->toArray();
     }

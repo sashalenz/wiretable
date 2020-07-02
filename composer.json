@@ -1,6 +1,6 @@
 {
   "name": "sashalenz/wiretable",
-  "description": "Code-Driven Table Implementation on Livewire",
+  "description": "Code-Driven DataTable Implementation with Livewire",
   "homepage": "https://github.com/sashalenz/wiretable",
   "keywords": [
     "livewire",

@@ -38,19 +38,19 @@
         <table class="table-auto w-full">
             <thead>
             <tr class="bg-gray-300 text-gray-700">
-                @foreach($this->fields as $field)
-                    <th class="border px-4 py-2" @if($field->getWidth()) style="width: {{ $field->getWidth() }}%;" @endif>
-                        @if($field->isSortable())
-                            <span wire:click="$set('sort', '{{ ($this->sort !== $field->getName()) ? $field->getName() : sprintf('-%s', $field->getName()) }}')" class="cursor-pointer flex justify-between">
-                                @if($field->getIcon())
-                                    <i class="far {{ $field->getIcon() }}"></i>
+                @foreach($this->columns as $column)
+                    <th class="border px-4 py-2" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
+                        @if($column->isSortable())
+                            <span wire:click="$set('sort', '{{ ($this->sort !== $column->getName()) ? $column->getName() : sprintf('-%s', $column->getName()) }}')" class="cursor-pointer flex justify-between">
+                                @if($column->getIcon())
+                                    <i class="far {{ $column->getIcon() }}"></i>
                                 @else
-                                    {!! $field->getTitle() !!}
+                                    {!! $column->getTitle() !!}
                                 @endif
-                                @if(!$field->isCurrentSort($this->sort))
+                                @if(!$column->isCurrentSort($this->sort))
                                     <i class="fad fa-sort"></i>
                                 @else
-                                    @if($field->isCurrentSort($this->sort, false))
+                                    @if($column->isCurrentSort($this->sort, false))
                                         <i class="fad fa-sort-up"></i>
                                     @else
                                         <i class="fad fa-sort-down"></i>
@@ -58,10 +58,10 @@
                                 @endunless
                             </span>
                         @else
-                            @if($field->getIcon())
-                                <i class="far {{ $field->getIcon() }}"></i>
+                            @if($column->getIcon())
+                                <i class="far {{ $column->getIcon() }}"></i>
                             @else
-                                {!! $field->getTitle() !!}
+                                {!! $column->getTitle() !!}
                             @endif
                         @endif
                     </th>
@@ -72,9 +72,9 @@
             @if($this->data->total())
                 @foreach($this->data->items() as $row)
                     <tr class="even:bg-gray-100">
-                        @foreach($this->fields as $field)
-                            <td class="border px-4 py-2 {{ $field->getClass($row) }}">
-                                {!! $field->renderIt($row) !!}
+                        @foreach($this->columns as $column)
+                            <td class="border px-4 py-2 {{ $column->getClass($row) }}">
+                                {!! $column->renderIt($row) !!}
                             </td>
                         @endforeach
                     </tr>

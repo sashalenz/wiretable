@@ -69,10 +69,10 @@ abstract class Wiretable extends Component
         return $this->sort;
     }
 
-    public function getFieldsProperty(): array
+    public function getColumnsProperty(): array
     {
         $actionColumn = $this->getActionColumn();
-        return $this->fields()
+        return $this->columns()
             ->when(
                 !is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
@@ -113,7 +113,7 @@ abstract class Wiretable extends Component
 
     abstract protected function query(): Builder;
 
-    abstract protected function fields(): Collection;
+    abstract protected function columns(): Collection;
 
     abstract protected function buttons(): Collection;
 }

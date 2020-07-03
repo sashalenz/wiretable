@@ -86,7 +86,7 @@ abstract class Wiretable extends Component
             ->allowedFilters($this->filters()->toArray())
             ->defaultSort($this->defaultSort)
             ->allowedSorts(...$this->getAllowedSorts())
-            ->when($this->search, new SearchFilter($this->search))
+            ->when($this->search && !$this->disableSearch, new SearchFilter($this->search))
             ->paginate($this->perPage)
             ->onEachSide(1);
     }

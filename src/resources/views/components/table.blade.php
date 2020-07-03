@@ -1,21 +1,25 @@
 <div class="flex flex-col break-words bg-white border border-2 rounded shadow-md w-full" x-data="{ filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
-    <div class="flex justify-between bg-gray-200 text-gray-700 py-3 px-6 ">
+    <div class="flex justify-between bg-gray-200 text-gray-700 py-3 px-6">
         <div class="flex uppercase font-semibold align-center items-center">
             <div wire:offline>[OFFLINE]</div>
             {{ $this->title }}
             <span wire:loading><i class="far fa-sync fa-spin ml-2"></i></span>
         </div>
         <div class="content-center">
-            <input wire:model="search" class="px-4 py-2 rounded mr-4" type="text" placeholder="{{ __('Search') }}" size="30">
-            <span class="mr-4 cursor-pointer text-gray-500 relative" @click="filtersAreShown = !filtersAreShown">
-                <i class="far fa-filter"></i>
-            </span>
-            <a class="mr-4 text-gray-500" href="javascript:{}" wire:click="resetTable">
+            @if(!$this->disableSearch)
+                <input wire:model="search" class="px-4 py-2 rounded mr-4" type="text" placeholder="{{ __('Search') }}" size="30">
+            @endif
+            @if(count($this->filters))
+                <span class="mr-4 cursor-pointer text-gray-500 relative" @click="filtersAreShown = !filtersAreShown">
+                    <i class="far fa-filter"></i>
+                </span>
+            @endif
+            <span class="mr-4 cursor-pointer text-gray-500 relative" wire:click="resetTable">
                 <i class="far fa-eraser"></i>
-            </a>
-            <a class="text-gray-500" href="javascript:{}" wire:click="refresh">
+            </span>
+            <span class="mr-4 cursor-pointer text-gray-500 relative" wire:click="refresh">
                 <i class="far fa-sync"></i>
-            </a>
+            </span>
         </div>
     </div>
     <div
@@ -87,10 +91,10 @@
     </div>
     <div class="font-semibold bg-gray-200 text-gray-700 py-3 px-6 mb-0">
         @if($this->data !== null)
-            <div class="flex flex-col sm:flex-row items-center justify-between">
-                <div class="flex content-center text-gray-500 items-center">
-                    {{ __('Showing') }} {{ $this->data->firstItem() ?? 0 }} {{ __('to') }} {{ $this->data->lastItem() }} {{ __('from') }} {{ $this->data->total() }}
-                </div>
+            <div class="flex flex-col sm:flex-row items-center justify-center">
+{{--                <div class="flex content-center text-gray-500 items-center">--}}
+{{--                    {{ __('Showing') }} {{ $this->data->firstItem() ?? 0 }} {{ __('to') }} {{ $this->data->lastItem() }} {{ __('from') }} {{ $this->data->total() }}--}}
+{{--                </div>--}}
                 <div class="flex">
                     {{ $this->data->links() }}
                 </div>

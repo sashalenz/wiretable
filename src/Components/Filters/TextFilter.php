@@ -11,6 +11,6 @@ class TextFilter extends Filter
      */
     public function render(): View
     {
-        return view('wiretable::components.filters.text-input');
+        return view('wiretable::components.filters.text-filter');
     }
 }

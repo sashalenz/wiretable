@@ -18,6 +18,7 @@ abstract class Column extends Component
     protected ?int $width = null;
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCallback = null;
+    protected ?Closure $displayCondition = null;
 
     public function __construct($name)
     {
@@ -159,6 +160,16 @@ abstract class Column extends Component
     }
 
     /**
+     * @param callable $displayCondition
+     * @return $this
+     */
+    public function displayIf(callable $displayCondition): self
+    {
+        $this->displayCondition = $displayCondition;
+        return $this;
+    }
+
+    /**
      * @param callable $styleCallback
      * @return $this
      */
@@ -197,6 +208,12 @@ abstract class Column extends Component
      */
     public function renderIt($row)
     {
+        $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
+
+        if ((bool) $condition === false) {
+            return null;
+        }
+
         if ($this->render() !== null) {
             return $this
                 ->render()

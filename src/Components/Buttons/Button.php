@@ -15,6 +15,7 @@ abstract class Button extends Component
     protected Collection $class;
     protected ?Closure $routeCallback = null;
     protected ?Closure $styleCallback = null;
+    protected ?Closure $displayCondition = null;
 
     public function __construct($name)
     {
@@ -124,6 +125,17 @@ abstract class Button extends Component
         return is_callable($this->routeCallback);
     }
 
+
+    /**
+     * @param callable $displayCondition
+     * @return $this
+     */
+    public function displayIf(callable $displayCondition): self
+    {
+        $this->displayCondition = $displayCondition;
+        return $this;
+    }
+
     /**
      * @param $row
      * @return string|null
@@ -148,6 +160,12 @@ abstract class Button extends Component
      */
     public function renderIt($row)
     {
+        $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
+
+        if ((bool) $condition === false) {
+            return null;
+        }
+
         if (!$this->getTitle() && !$this->getIcon()) {
             throw new RuntimeException('Title or Icon must be presented');
         }

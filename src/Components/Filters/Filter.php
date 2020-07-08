@@ -58,7 +58,7 @@ abstract class Filter extends AllowedFilter
         return $this;
     }
 
-    public function getValue(string $value)
+    public function getValue(?string $value)
     {
         $newValue = method_exists($this, 'castValue') ? $this->castValue($value) : $value;
         return ($newValue !== $this->getDefault()) ? $newValue : null;

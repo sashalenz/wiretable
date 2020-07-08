@@ -29,7 +29,8 @@ abstract class Wiretable extends Component
 
     protected $listeners = [
         'refresh',
-        'resetTable'
+        'resetTable',
+        'addFilter'
     ];
 
     public function refresh(): void
@@ -93,20 +94,17 @@ abstract class Wiretable extends Component
 
     public function paginationView(): string
     {
-        return 'partials.pagination';
+        return 'wiretable::pagination';
     }
 
     protected function getActionColumn():? ActionColumn
     {
-        $filteredButtons = $this->buttons()
-            ->filter(fn (Button $button) => $button->hasRouteCallback());
-
-        if (!$filteredButtons->count()) {
+        if (!$this->buttons()->count()) {
             return null;
         }
 
         return ActionColumn::make('Action')
-            ->withButtons($filteredButtons->toArray());
+            ->withButtons($this->buttons()->toArray());
     }
 
     abstract public function getTitleProperty(): string;

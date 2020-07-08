@@ -6,6 +6,11 @@ use Illuminate\View\View;
 
 class SelectFilter extends Filter
 {
+    public function castValue(string $value):? string
+    {
+        return ($value) ?: null;
+    }
+
     /**
      * @return View
      */

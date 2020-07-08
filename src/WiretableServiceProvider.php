@@ -3,6 +3,7 @@
 namespace Sashalenz\Wiretable;
 
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Sashalenz\Wiretable\Components\Inputs\SelectInput;
 use Sashalenz\Wiretable\Components\Inputs\SwitchInput;
 use Sashalenz\Wiretable\Components\Inputs\TextFilter;
@@ -23,6 +24,8 @@ class WiretableServiceProvider extends ServiceProvider
         $this->loadViewComponentsAs('wiretable', [
             Table::class
         ]);
+
+        Livewire::component('model-search', ModelSearch::class);
     }
 
     public function register(): void

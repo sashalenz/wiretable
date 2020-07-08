@@ -6,6 +6,11 @@ use Illuminate\View\View;
 
 class SwitchFilter extends Filter
 {
+    public function castValue(string $value): bool
+    {
+        return (bool) $value;
+    }
+
     /**
      * @return View
      */

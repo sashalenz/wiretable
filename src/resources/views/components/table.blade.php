@@ -1,6 +1,6 @@
 <div class="flex flex-col break-words bg-white border rounded shadow-md w-full" x-data="{ filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
     <div class="flex flex-col sm:flex-row justify-between bg-gray-200 text-gray-700 py-3 px-6">
-        <div class="flex uppercase font-semibold align-center items-center mb-2 sm:mb-0">
+        <div class="flex uppercase font-semibold align-center items-center mb-2 sm:mb-0 py-2">
             <div wire:offline>[OFFLINE]</div>
             {{ $this->title }}
             <span wire:loading><i class="far fa-sync fa-spin ml-2"></i></span>
@@ -24,29 +24,32 @@
             </span>
         </div>
     </div>
-    <div
-            class="flex justify-between bg-gray-200 text-gray-700"
-            x-show="filtersAreShown"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:leave="transition ease-in duration-300"
-            x-transition:leave-end="opacity-0"
-    >
-        <div class="flex w-full py-3 px-6 border-t align-center items-center">
-            @foreach($this->filters as $filter)
-                <div class="w-1/4 px-2">
-                    {!! $filter->renderIt() !!}
-                </div>
-            @endforeach
+    @if(count($this->filters))
+        <div
+                class="flex justify-between bg-gray-200 text-gray-700"
+                x-show="filtersAreShown"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-end="opacity-0"
+        >
+            <div class="flex w-full py-3 px-6 border-t align-center items-center">
+                @foreach($this->filters as $filter)
+                    <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
+                        {!! $filter->renderIt() !!}
+                    </div>
+                @endforeach
+            </div>
         </div>
-    </div>
-    <div class="w-full overflow-hidden">
-        <div class="w-full overflow-x-scroll">
+    @endif
+
+    <div class="w-full overflow-hidden lg:overflow-visible">
+        <div class="w-full overflow-x-scroll overflow-y-visible lg:overflow-visible">
             <table class="w-full">
                 <thead>
                 <tr class="bg-gray-300 text-gray-700">
                     @foreach($this->columns as $column)
-                        <th class="border px-4 py-2" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
+                        <th class="border px-4 py-2 whitespace-no-wrap" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
                             @if($column->isSortable())
                                 <span wire:click="$set('sort', '{{ ($this->sort !== $column->getName()) ? $column->getName() : sprintf('-%s', $column->getName()) }}')" class="cursor-pointer flex justify-between">
                                 @if($column->getIcon())
@@ -76,7 +79,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @if($this->data->total())
+                @if(count($this->data->items()))
                     @foreach($this->data->items() as $row)
                         <tr class="even:bg-gray-100">
                             @foreach($this->columns as $column)

@@ -9,9 +9,4 @@
             <div class="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0"></div>
         </span>
     </label>
-    @error($name)
-    <p class="text-red-500 text-xs italic mt-4">
-        {{ $message }}
-    </p>
-    @enderror
 </div>

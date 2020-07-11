@@ -22,7 +22,7 @@
             @foreach ($elements as $element)
                 {{-- "Three Dots" Separator --}}
                 @if (is_string($element))
-                    <li aria-disabled="true">
+                    <li aria-disabled="true" class="hidden sm:inline-block">
                         <span class="px-4 py-3 block text-gray-500 border border-r-0 border-gray-300">{{ $element }}</span>
                     </li>
                 @endif
@@ -35,7 +35,7 @@
                                 <span class="px-4 py-3 block text-white bg-blue-900 border border-r-0 border-gray-300">{{ $page }}</span>
                             </li>
                         @else
-                            <li>
+                            <li class="hidden sm:inline-block">
                                 <button wire:click="gotoPage({{ $page }})"
                                         class="btn border-r-0"
                                         aria-label="@lang('pagination.goto_page', ['page' => $page])"

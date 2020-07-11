@@ -1,5 +1,5 @@
 <div class="flex flex-col break-words bg-white border rounded shadow-md w-full" x-data="{ filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
-    <div class="flex flex-col sm:flex-row justify-between bg-gray-200 text-gray-700 py-3 px-6">
+    <div class="flex flex-col sm:flex-row justify-between bg-gray-200 text-gray-700 py-3 px-2 sm:px-6">
         <div class="flex uppercase font-semibold align-center items-center mb-2 sm:mb-0 py-2">
             <div wire:offline>[OFFLINE]</div>
             {{ $this->title }}
@@ -27,11 +27,8 @@
     @if(count($this->filters))
         <div
                 class="flex justify-between bg-gray-200 text-gray-700"
-                x-show="filtersAreShown"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0"
-                x-transition:leave="transition ease-in duration-300"
-                x-transition:leave-end="opacity-0"
+                x-show.transition.opacity="filtersAreShown"
+                x-cloak
         >
             <div class="flex w-full py-3 px-6 border-t align-center items-center">
                 @foreach($this->filters as $filter)
@@ -42,7 +39,21 @@
             </div>
         </div>
     @endif
-
+    <div
+            x-data="toggleHandler()"
+            class="flex justify-between bg-gray-200 text-gray-700"
+            x-show.transition.opacity="checked.length"
+            @toggle-check.window="toggleCheck($event.detail)"
+            x-cloak
+    >
+        <div class="flex w-full py-3 px-6 border-t align-center items-center">
+            @foreach($this->actions as $action)
+                <div class="w-full sm:w-1/2 lg:w-1/6 px-2">
+                    @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()])
+                </div>
+            @endforeach
+        </div>
+    </div>
     <div class="w-full overflow-hidden lg:overflow-visible">
         <div class="w-full overflow-x-scroll overflow-y-visible lg:overflow-visible">
             <table class="w-full">
@@ -50,30 +61,7 @@
                 <tr class="bg-gray-300 text-gray-700">
                     @foreach($this->columns as $column)
                         <th class="border px-4 py-2 whitespace-no-wrap" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
-                            @if($column->isSortable())
-                                <span wire:click="$set('sort', '{{ ($this->sort !== $column->getName()) ? $column->getName() : sprintf('-%s', $column->getName()) }}')" class="cursor-pointer flex justify-between">
-                                @if($column->getIcon())
-                                        <i class="far {{ $column->getIcon() }}"></i>
-                                    @else
-                                        {!! $column->getTitle() !!}
-                                    @endif
-                                    @if(!$column->isCurrentSort($this->sort))
-                                        <i class="fad fa-sort"></i>
-                                    @else
-                                        @if($column->isCurrentSort($this->sort, false))
-                                            <i class="fad fa-sort-up"></i>
-                                        @else
-                                            <i class="fad fa-sort-down"></i>
-                                        @endif
-                                    @endunless
-                            </span>
-                            @else
-                                @if($column->getIcon())
-                                    <i class="far {{ $column->getIcon() }}"></i>
-                                @else
-                                    {!! $column->getTitle() !!}
-                                @endif
-                            @endif
+                            {!! $column->renderTitle($this->sort) !!}
                         </th>
                     @endforeach
                 </tr>
@@ -98,10 +86,10 @@
     </div>
     <div class="font-semibold bg-gray-200 text-gray-700 py-3 px-6 mb-0">
         @if($this->data !== null)
-            <div class="flex flex-col sm:flex-row items-center justify-center">
-                {{--                <div class="flex content-center text-gray-500 items-center">--}}
-                {{--                    {{ __('Showing') }} {{ $this->data->firstItem() ?? 0 }} {{ __('to') }} {{ $this->data->lastItem() }} {{ __('from') }} {{ $this->data->total() }}--}}
-                {{--                </div>--}}
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <div class="flex content-center text-gray-500 items-center">
+                    {{ __('Showing') }} {{ $this->data->firstItem() ?? 0 }} {{ __('to') }} {{ $this->data->lastItem() }} {{ __('from') }} {{ $this->data->total() }}
+                </div>
                 <div class="flex">
                     {{ $this->data->links() }}
                 </div>
@@ -109,3 +97,41 @@
         @endif
     </div>
 </div>
+
+<script>
+function checkboxHandler(id) {
+    return {
+        value: false,
+        event ($dispatch) {
+            this.value = !this.value;
+            return $dispatch('toggle-check', {
+                id: id, value: this.value
+            })
+        },
+        check (detail, $dispatch) {
+            this.value = detail;
+            return this.event($dispatch);
+        }
+    }
+}
+function toggleHandler() {
+    return {
+        checked: [],
+        toggleCheck (detail) {
+            return (detail.value) ? this.addItem(detail.id) : this.removeItem(detail.id);
+        },
+        addItem (id) {
+            let index = this.checked.indexOf(id);
+            if (index === -1) {
+                this.checked.push(id)
+            }
+        },
+        removeItem (id) {
+            let index = this.checked.indexOf(id);
+            if (index !== -1) {
+                this.checked.splice(index, 1);
+            }
+        }
+    }
+}
+</script>

@@ -43,7 +43,7 @@ abstract class Button extends Component
 
     /**
      * @param string|null $icon
-     * @return Button
+     * @return $this
      */
     public function icon(?string $icon): self
     {

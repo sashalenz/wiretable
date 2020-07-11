@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Sashalenz\Wiretable\Components\Buttons\Button;
+use Sashalenz\Wiretable\Components\Actions\Action;
 use Sashalenz\Wiretable\Components\Columns\ActionColumn;
+use Sashalenz\Wiretable\Components\Columns\CheckboxColumn;
 use Sashalenz\Wiretable\Traits\WithFiltering;
 use Sashalenz\Wiretable\Traits\WithSearching;
 use Sashalenz\Wiretable\Traits\WithSorting;
@@ -24,6 +25,8 @@ abstract class Wiretable extends Component
         WithSearching;
 
     public int $perPage = 20;
+
+    protected string $model;
 
     protected $request;
 
@@ -73,11 +76,24 @@ abstract class Wiretable extends Component
     public function getColumnsProperty(): array
     {
         $actionColumn = $this->getActionColumn();
+        $checkboxColumn = $this->getCheckboxColumn();
+
         return $this->columns()
             ->when(
                 !is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
+            ->when(
+                !is_null($checkboxColumn),
+                fn (Collection $rows) => $rows->prepend($checkboxColumn)
+            )
+            ->toArray();
+    }
+
+    public function getActionsProperty(): array
+    {
+        return $this->actions()
+            ->each(fn (Action $action) => $action->setModel($this->model))
             ->toArray();
     }
 
@@ -94,7 +110,7 @@ abstract class Wiretable extends Component
 
     public function paginationView(): string
     {
-        return 'wiretable::pagination';
+        return 'wiretable::partials.pagination';
     }
 
     protected function getActionColumn():? ActionColumn
@@ -107,6 +123,15 @@ abstract class Wiretable extends Component
             ->withButtons($this->buttons()->toArray());
     }
 
+    protected function getCheckboxColumn():? CheckboxColumn
+    {
+        if (!$this->actions()->count()) {
+            return null;
+        }
+
+        return CheckboxColumn::make('Checkbox');
+    }
+
     abstract public function getTitleProperty(): string;
 
     abstract protected function query(): Builder;
@@ -114,4 +139,6 @@ abstract class Wiretable extends Component
     abstract protected function columns(): Collection;
 
     abstract protected function buttons(): Collection;
+
+    abstract protected function actions(): Collection;
 }

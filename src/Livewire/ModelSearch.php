@@ -1,6 +1,6 @@
 <?php
 
-namespace Sashalenz\Wiretable;
+namespace Sashalenz\Wiretable\Livewire;
 
 use App\Filters\SearchFilter;
 use Livewire\Component;
@@ -53,6 +53,6 @@ class ModelSearch extends Component
 
     public function render()
     {
-        return view('wiretable::model-search');
+        return view('wiretable::livewire.model-search');
     }
 }

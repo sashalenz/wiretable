@@ -4,10 +4,8 @@ namespace Sashalenz\Wiretable;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use Sashalenz\Wiretable\Components\Inputs\SelectInput;
-use Sashalenz\Wiretable\Components\Inputs\SwitchInput;
-use Sashalenz\Wiretable\Components\Inputs\TextFilter;
 use Sashalenz\Wiretable\Components\Table;
+use Sashalenz\Wiretable\Livewire\ModelSearch;
 
 class WiretableServiceProvider extends ServiceProvider
 {

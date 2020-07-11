@@ -7,7 +7,6 @@ use Illuminate\View\View;
 class ActionColumn extends Column
 {
     protected ?int $width = 5;
-    protected ?string $icon = 'far fa-dots';
     protected ?array $buttons = [];
 
     /**

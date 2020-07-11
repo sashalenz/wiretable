@@ -14,7 +14,7 @@ abstract class Column extends Component
     protected ?string $title = null;
     protected bool $sortable = false;
     protected ?string $icon = null;
-    protected Collection $class;
+    protected ?Collection $class = null;
     protected ?int $width = null;
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCallback = null;
@@ -59,20 +59,6 @@ abstract class Column extends Component
     public function isSortable(): bool
     {
         return $this->sortable;
-    }
-
-    /**
-     * @param string $sort
-     * @param bool $abs
-     * @return bool
-     */
-    public function isCurrentSort(string $sort, bool $abs = true) : bool
-    {
-        if ($abs === true) {
-            return str_replace('-', '', $sort) === $this->getName();
-        }
-
-        return $sort === $this->getName();
     }
 
     /**
@@ -200,6 +186,31 @@ abstract class Column extends Component
     public static function make(string $name)
     {
         return new static($name);
+    }
+
+    /**
+     * @param string|null $sort
+     * @return \Illuminate\Contracts\View\Factory|View|string|null
+     */
+    public function renderTitle(?string $sort = null)
+    {
+        if ($this->isSortable()) {
+            return view('wiretable::partials.table-title')
+                ->with([
+                    'name' => $this->getName(),
+                    'icon' => $this->getIcon(),
+                    'title' => $this->getTitle(),
+                    'isCurrentSort' => str_replace('-', '', $sort) === $this->getName(),
+                    'isSortUp' => $sort === $this->getName(),
+                    'sort' => $sort
+                ]);
+        }
+
+        if ($this->getIcon()) {
+            return "<i class=\"far {$this->getIcon()}\"></i>";
+        }
+
+        return $this->getTitle();
     }
 
     /**

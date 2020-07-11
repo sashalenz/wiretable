@@ -136,9 +136,18 @@ abstract class Wiretable extends Component
 
     abstract protected function query(): Builder;
 
-    abstract protected function columns(): Collection;
+    protected function columns(): Collection
+    {
+        return collect();
+    }
 
-    abstract protected function buttons(): Collection;
+    protected function buttons(): Collection
+    {
+        return collect();
+    }
 
-    abstract protected function actions(): Collection;
+    protected function actions(): Collection
+    {
+        return collect();
+    }
 }

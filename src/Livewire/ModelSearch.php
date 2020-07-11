@@ -46,7 +46,7 @@ class ModelSearch extends Component
 
         return $this->model::query()
             ->when($this->search, new SearchFilter($this->search))
-            ->orderByDesc((new $this->model)->getKeyName())
+            ->orderBy((new $this->model)->getKeyName())
             ->take(20)
             ->get();
     }

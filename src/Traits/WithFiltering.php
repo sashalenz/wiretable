@@ -73,5 +73,8 @@ trait WithFiltering
             ->toArray();
     }
 
-    abstract protected function filters(): Collection;
+    protected function filters(): Collection
+    {
+        return collect();
+    }
 }

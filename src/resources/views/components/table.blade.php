@@ -1,4 +1,4 @@
-<div class="flex flex-col break-words bg-white border rounded shadow-md w-full" x-data="{ filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
+<div class="flex flex-col break-words bg-white border rounded shadow-md w-full" x-data="{ filtersCount: {{ count($this->filters) }}, filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
     <div class="flex flex-col sm:flex-row justify-between bg-gray-200 text-gray-700 py-3 px-2 sm:px-6">
         <div class="flex uppercase font-semibold align-center items-center mb-2 sm:mb-0 py-2">
             <div wire:offline>[OFFLINE]</div>
@@ -11,11 +11,9 @@
                     <input wire:model="search" class="px-4 py-2 rounded mr-4" type="text" placeholder="{{ __('Search') }}" size="20">
                 @endif
             </div>
-            @if(count($this->filters))
-                <span class="mr-4 cursor-pointer text-gray-500 relative" @click="filtersAreShown = !filtersAreShown">
+            <span class="mr-4 cursor-pointer text-gray-500 relative" x-show="filtersCount" @click="filtersAreShown = !filtersAreShown">
                     <i class="far fa-filter"></i>
                 </span>
-            @endif
             <span class="mr-4 cursor-pointer text-gray-500 relative" wire:click="resetTable">
                 <i class="far fa-eraser"></i>
             </span>
@@ -24,23 +22,21 @@
             </span>
         </div>
     </div>
-    @if(count($this->filters))
-        <div
-                class="flex justify-between bg-gray-200 text-gray-700"
-                x-show.transition.opacity="filtersAreShown"
-                x-cloak
-        >
-            <div class="flex w-full py-3 px-6 border-t align-center items-center">
-                @foreach($this->filters as $filter)
-                    <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
-                        {!! $filter->renderIt() !!}
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
     <div
-            x-data="toggleHandler()"
+            class="flex justify-between bg-gray-200 text-gray-700"
+            x-show.transition.opacity="filtersCount && filtersAreShown"
+            x-cloak
+    >
+        <div class="flex w-full py-3 px-6 border-t align-center items-center">
+            @foreach($this->filters as $filter)
+                <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
+                    {!! $filter->renderIt() !!}
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <div
+            x-data="window.toggleHandler()"
             class="flex justify-between bg-gray-200 text-gray-700"
             x-show.transition.opacity="checked.length"
             @toggle-check.window="toggleCheck($event.detail)"
@@ -48,8 +44,8 @@
     >
         <div class="flex w-full py-3 px-6 border-t align-center items-center">
             @foreach($this->actions as $action)
-                <div class="w-full sm:w-1/2 lg:w-1/6 px-2">
-                    @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()])
+                <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
+                    @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()], key($loop->index))
                 </div>
             @endforeach
         </div>
@@ -98,40 +94,4 @@
     </div>
 </div>
 
-<script>
-function checkboxHandler(id) {
-    return {
-        value: false,
-        event ($dispatch) {
-            this.value = !this.value;
-            return $dispatch('toggle-check', {
-                id: id, value: this.value
-            })
-        },
-        check (detail, $dispatch) {
-            this.value = detail;
-            return this.event($dispatch);
-        }
-    }
-}
-function toggleHandler() {
-    return {
-        checked: [],
-        toggleCheck (detail) {
-            return (detail.value) ? this.addItem(detail.id) : this.removeItem(detail.id);
-        },
-        addItem (id) {
-            let index = this.checked.indexOf(id);
-            if (index === -1) {
-                this.checked.push(id)
-            }
-        },
-        removeItem (id) {
-            let index = this.checked.indexOf(id);
-            if (index !== -1) {
-                this.checked.splice(index, 1);
-            }
-        }
-    }
-}
-</script>
+<script type="application/javascript" src="{{ asset('vendor/wiretable/app.js') }}"></script>

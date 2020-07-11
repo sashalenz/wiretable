@@ -16,7 +16,11 @@ class WiretableServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/resources/views' => $this->app->resourcePath('views/vendor/wiretable'),
-            ], 'wiretable');
+            ], 'views');
+
+            $this->publishes([
+                __DIR__.'/resources/js' => public_path('vendor/wiretable'),
+            ], 'views');
         }
 
         $this->loadViewComponentsAs('wiretable', [

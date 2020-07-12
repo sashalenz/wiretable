@@ -10,15 +10,18 @@ use RuntimeException;
 
 abstract class Column extends Component
 {
-    protected string $name;
-    protected ?string $title = null;
-    protected bool $sortable = false;
-    protected ?string $icon = null;
-    protected ?Collection $class = null;
-    protected ?int $width = null;
-    protected ?Closure $styleCallback = null;
-    protected ?Closure $displayCallback = null;
-    protected ?Closure $displayCondition = null;
+    private string $name;
+    private Collection $class;
+    private ?string $title = null;
+    private bool $sortable = false;
+    private ?string $icon = null;
+    private ?int $width = null;
+    private ?string $highlight = null;
+    private ?Closure $styleCallback = null;
+    private ?Closure $displayCallback = null;
+    private ?Closure $displayCondition = null;
+
+    protected bool $hasHighlight = false;
 
     public function __construct($name)
     {
@@ -95,15 +98,23 @@ abstract class Column extends Component
      */
     public function getClass($row): ?string
     {
+        $classes = collect();
+
+        $classes->push($this->class);
+
         $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
 
         if (!is_string($class) && !is_null($class)) {
             throw new RuntimeException('Return value must be a string');
         }
 
-        $this->class->push($class);
+        $classes->push($class);
 
-        return $this->class
+        if ($this->hasHighlight && !is_null($this->getHighlight()) && ($this->getHighlight() === $this->getValue($row))) {
+            $classes->push('text-green-700 font-semibold');
+        }
+
+        return $classes
             ->filter()
             ->flatten()
             ->implode(' ');
@@ -133,6 +144,24 @@ abstract class Column extends Component
     public function getWidth(): ?int
     {
         return $this->width;
+    }
+
+    /**
+     * @param string $highlight
+     * @return $this
+     */
+    public function setHighlight(string $highlight): self
+    {
+        $this->highlight = $highlight;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHighlight():? string
+    {
+        return $this->highlight;
     }
 
     /**
@@ -180,12 +209,12 @@ abstract class Column extends Component
     }
 
     /**
-     * @param string $name
-     * @return static
+     * @param $row
+     * @return string|null
      */
-    public static function make(string $name)
+    protected function getValue($row):? string
     {
-        return new static($name);
+        return data_get($row->toArray(), $this->getName());
     }
 
     /**
@@ -237,6 +266,15 @@ abstract class Column extends Component
             return call_user_func($this->displayCallback, $row);
         }
 
-        return data_get($row->toArray(), $this->name);
+        return $this->getValue($row);
+    }
+
+    /**
+     * @param string $name
+     * @return static
+     */
+    public static function make(string $name)
+    {
+        return new static($name);
     }
 }

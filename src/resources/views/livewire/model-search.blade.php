@@ -1,5 +1,5 @@
-<div class="w-full relative" x-on:click.away="@this.set('isOpen', false)">
-    <div class="cursor-pointer form-input" x-on:click.prevent="@this.set('isOpen', true)">
+<div class="w-full relative" x-data="{ open: {{ $isOpen ? 1 : 0 }} }" x-on:click.away="(open) ? @this.set('isOpen', false) : null">
+    <div class="cursor-pointer form-input" x-on:click.prevent="(!open) ? @this.set('isOpen', true) : null">
         <div class="relative" role="textbox">
             @if($this->selected)
                 @unless($required)

@@ -12,6 +12,7 @@ trait WithSorting
     public function initializeWithSorting(): void
     {
         $this->sort = $this->resolveSort();
+        $this->request()->query->set('sort', $this->sort);
     }
 
     public function resolveSort()

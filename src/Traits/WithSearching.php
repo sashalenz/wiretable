@@ -10,6 +10,7 @@ trait WithSearching
     public function initializeWithSearching(): void
     {
         $this->search = $this->resolveSearching();
+        $this->request()->query->set('search', $this->search);
     }
 
     public function resolveSearching()

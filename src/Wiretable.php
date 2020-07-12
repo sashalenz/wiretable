@@ -11,6 +11,7 @@ use Livewire\WithPagination;
 use Sashalenz\Wiretable\Components\Actions\Action;
 use Sashalenz\Wiretable\Components\Columns\ActionColumn;
 use Sashalenz\Wiretable\Components\Columns\CheckboxColumn;
+use Sashalenz\Wiretable\Components\Columns\Column;
 use Sashalenz\Wiretable\Traits\WithFiltering;
 use Sashalenz\Wiretable\Traits\WithSearching;
 use Sashalenz\Wiretable\Traits\WithSorting;
@@ -49,6 +50,9 @@ abstract class Wiretable extends Component
         $this->resetSearch();
     }
 
+    /**
+     * @return QueryBuilderRequest
+     */
     public function request(): QueryBuilderRequest
     {
         if (!$this->request) {
@@ -79,6 +83,9 @@ abstract class Wiretable extends Component
         $checkboxColumn = $this->getCheckboxColumn();
 
         return $this->columns()
+            ->each(
+                fn (Column $column) => !is_null($this->search) && $column->setHighlight($this->search)
+            )
             ->when(
                 !is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)

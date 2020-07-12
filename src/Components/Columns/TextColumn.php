@@ -6,6 +6,8 @@ use Illuminate\View\View;
 
 class TextColumn extends Column
 {
+    protected bool $hasHighlight = true;
+
     /**
      * @return View|null
      */

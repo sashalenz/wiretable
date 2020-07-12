@@ -4,6 +4,7 @@ namespace Sashalenz\Wiretable;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Sashalenz\Wiretable\Components\Modal;
 use Sashalenz\Wiretable\Components\Table;
 use Sashalenz\Wiretable\Livewire\ModelSearch;
 
@@ -24,7 +25,8 @@ class WiretableServiceProvider extends ServiceProvider
         }
 
         $this->loadViewComponentsAs('wiretable', [
-            Table::class
+            Table::class,
+            Modal::class
         ]);
 
         Livewire::component('model-search', ModelSearch::class);

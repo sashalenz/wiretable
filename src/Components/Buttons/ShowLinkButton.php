@@ -2,7 +2,7 @@
 
 namespace Sashalenz\Wiretable\Components\Buttons;
 
-class ShowButton extends Button
+class ShowLinkButton extends Button
 {
     protected ?string $icon = 'far fa-eye';
 

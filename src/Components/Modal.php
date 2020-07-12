@@ -6,7 +6,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
-class Table extends Component
+class Modal extends Component
 {
     /**
      * Table constructor.
@@ -21,6 +21,7 @@ class Table extends Component
      */
     public function render()
     {
-        return view('wiretable::components.table');
+        return view('wiretable::components.modal');
     }
+
 }

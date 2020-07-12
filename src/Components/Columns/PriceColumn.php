@@ -9,10 +9,10 @@ class PriceColumn extends Column
     public string $currency = 'EUR';
 
     /**
-     * @param $currency
+     * @param string $currency
      * @return $this
      */
-    public function currency($currency): self
+    public function currency(string $currency): self
     {
         $this->currency = $currency;
 
@@ -36,7 +36,7 @@ class PriceColumn extends Column
      */
     public function renderIt($row)
     {
-        return data_get($row->toArray(), $this->name) . ' <i class="'. $this->getCurrencySymbol() .'"></i>';
+        return $this->getValue($row) . ' <i class="'. $this->getCurrencySymbol() .'"></i>';
     }
 
     /**

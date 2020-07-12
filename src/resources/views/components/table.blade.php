@@ -93,5 +93,3 @@
         @endif
     </div>
 </div>
-
-<script type="application/javascript" src="{{ asset('vendor/wiretable/app.js') }}"></script>

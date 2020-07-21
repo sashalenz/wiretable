@@ -7,12 +7,13 @@ use Illuminate\Support\Collection;
 
 abstract class Action
 {
-    protected string $name;
-    protected string $model;
-    protected ?string $title = null;
-    protected ?string $icon = null;
-    protected Collection $class;
-    protected ?Closure $displayCondition = null;
+    private string $name;
+    private string $model;
+    private string $width = 'w-full sm:w-1/2 lg:w-1/4';
+    private ?string $title = null;
+    private ?string $icon = null;
+    private Collection $class;
+    private ?Closure $displayCondition = null;
 
     /**
      * Action constructor.
@@ -104,6 +105,24 @@ abstract class Action
             ->filter()
             ->flatten()
             ->implode(' ');
+    }
+
+    /**
+     * @param string $width
+     * @return $this
+     */
+    public function width(string $width): self
+    {
+        $this->width = $width;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWidth(): string
+    {
+        return $this->width;
     }
 
     /**

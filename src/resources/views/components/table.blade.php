@@ -27,9 +27,9 @@
             x-show.transition.opacity="filtersCount && filtersAreShown"
             x-cloak
     >
-        <div class="flex w-full py-3 px-6 border-t align-center items-center">
+        <div class="flex flex-wrap w-full py-3 px-6 border-t align-center items-center">
             @foreach($this->filters as $filter)
-                <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
+                <div class="px-2 my-2 sm:my-0 {{ $filter->getWidth() }}">
                     {!! $filter->renderIt() !!}
                 </div>
             @endforeach
@@ -42,9 +42,9 @@
             @toggle-check.window="toggleCheck($event.detail)"
             x-cloak
     >
-        <div class="flex w-full py-3 px-6 border-t align-center items-center">
+        <div class="flex flex-wrap w-full py-3 px-6 border-t align-center items-center">
             @foreach($this->actions as $action)
-                <div class="w-full sm:w-1/2 lg:w-1/4 px-2">
+                <div class="px-2 my-2 sm:my-0 {{ $action->getWidth() }}">
                     @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()], key($loop->index))
                 </div>
             @endforeach

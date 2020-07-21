@@ -7,10 +7,11 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 abstract class Filter extends AllowedFilter
 {
-    protected array $options = [];
-    protected ?string $label = null;
-    protected bool $required = false;
-    protected $value;
+    private string $width = 'w-full sm:w-1/2 lg:w-1/4';
+    private array $options = [];
+    private ?string $label = null;
+    private bool $required = false;
+    private ?string $value = null;
 
     /**
      * @param array $options
@@ -49,6 +50,24 @@ abstract class Filter extends AllowedFilter
     }
 
     /**
+     * @param string $width
+     * @return $this
+     */
+    public function width(string $width): self
+    {
+        $this->width = $width;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWidth(): string
+    {
+        return $this->width;
+    }
+
+    /**
      * @param string|null $value
      * @return $this
      */
@@ -74,7 +93,7 @@ abstract class Filter extends AllowedFilter
             'label' => $this->getLabel(),
             'options' => $this->getOptions(),
             'required' => $this->required,
-            'value' => $this->value
+            'value' => $this->value ?? $this->default
         ]);
     }
 

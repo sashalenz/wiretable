@@ -1,4 +1,4 @@
-<div class="flex flex-wrap">
+<div class="flex px-2">
     <select id="{{ $name }}" class="form-input w-full" name="{{ $name }}" wire:change="addFilter('{{ $name }}', $event.target.value)" @if($required) required @endif>
         @if(!$required)
             <option value="" class="text-gray-700" @if(is_null($value)) selected @endif>{{ $label }}</option>

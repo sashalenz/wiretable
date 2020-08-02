@@ -1,95 +1,119 @@
-<div class="flex flex-col break-words bg-white border rounded shadow-md w-full" x-data="{ filtersCount: {{ count($this->filters) }}, filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
-    <div class="flex flex-col sm:flex-row justify-between bg-gray-200 text-gray-700 py-3 px-2 sm:px-6">
-        <div class="flex uppercase font-semibold align-center items-center mb-2 sm:mb-0 py-2">
-            <div wire:offline>[OFFLINE]</div>
-            {{ $this->title }}
-            <span wire:loading><i class="far fa-sync fa-spin ml-2"></i></span>
-        </div>
-        <div class="content-center flex items-center">
-            <div class="w-full">
-                @if(!$this->disableSearch)
-                    <input wire:model="search" class="px-4 py-2 rounded mr-4" type="text" placeholder="{{ __('Search') }}" size="20">
-                @endif
+<div class="flex flex-col space-y-3">
+    <div class="sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 overflow-x-auto" x-data="{ filtersCount: {{ count($this->filters) }}, filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
+        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+            <div class="px-3 md:px-6 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider flex flex-col md:flex-row justify-between items-center">
+                <div class="flex-1 flex uppercase align-center items-center md:text-left content-center mb-2 sm:mb-0 py-2">
+                    <div wire:offline>[OFFLINE]</div>
+                    <span class="text-center">{{ $this->title }}</span>
+                    <span wire:loading>
+                        <svg class="ml-2 w-4 h-4 animate-spin" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </span>
+                </div>
+                <div class="content-center flex items-center h-6 space-x-3">
+                    @if(!$this->disableSearch)
+                        <div class="w-full">
+                            <div class="max-w-lg w-full lg:max-w-xs">
+                                <label for="search" class="sr-only">{{ __('wiretable::table.search') }}</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input id="search" class="block w-full pl-10 pr-3 py-1 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm transition duration-150 ease-in-out" placeholder="{{ __('wiretable::table.search') }}" type="search" wire:model="search">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    <a href="#" class="text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150" x-show="filtersCount" @click.prevent="filtersAreShown = !filtersAreShown" x-cloak>
+                        <svg class="w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150" wire:click.prevent="resetTable">
+                        <svg class="w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path>
+                            <path d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150" wire:click.prevent="refresh">
+                        <svg class="w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <span class="mr-4 cursor-pointer text-gray-500 relative" x-show="filtersCount" @click="filtersAreShown = !filtersAreShown">
-                    <i class="far fa-filter"></i>
-                </span>
-            <span class="mr-4 cursor-pointer text-gray-500 relative" wire:click="resetTable">
-                <i class="far fa-eraser"></i>
-            </span>
-            <span class="cursor-pointer text-gray-500 relative" wire:click="refresh">
-                <i class="far fa-sync"></i>
-            </span>
+
+            <div
+                    class="flex justify-between bg-white px-6 py-4 whitespace-no-wrap border-t border-gray-200 last:border-0 text-gray-700 flex flex-wrap w-full align-center items-center"
+                    x-show.transition.opacity="filtersCount && filtersAreShown"
+                    x-cloak
+            >
+                @foreach($this->filters as $filter)
+                    <div class="px-2 my-2 sm:my-0 {{ $filter->getWidth() }}">
+                        {!! $filter->renderIt() !!}
+                    </div>
+                @endforeach
+            </div>
+            <div
+                    x-data="window.toggleHandler()"
+                    x-show="checked.length"
+                    x-cloak
+                    @toggle-check.window="toggleCheck($event.detail)"
+                    class="flex justify-between bg-white px-6 py-4 whitespace-no-wrap border-t border-gray-200 last:border-0 text-gray-700 flex flex-wrap w-full align-center items-center"
+                    x-transition:enter="transition ease-linear duration-300 transform"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="transition ease-linear duration-300 transform"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+            >
+                @foreach($this->actions as $action)
+                    <div class="px-2 my-2 sm:my-0 {{ $action->getWidth() }}">
+                        @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()], key($loop->index))
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
-    <div
-            class="flex justify-between bg-gray-200 text-gray-700"
-            x-show.transition.opacity="filtersCount && filtersAreShown"
-            x-cloak
-    >
-        <div class="flex flex-wrap w-full py-3 px-6 border-t align-center items-center">
-            @foreach($this->filters as $filter)
-                <div class="px-2 my-2 sm:my-0 {{ $filter->getWidth() }}">
-                    {!! $filter->renderIt() !!}
-                </div>
-            @endforeach
-        </div>
-    </div>
-    <div
-            x-data="window.toggleHandler()"
-            class="flex justify-between bg-gray-200 text-gray-700"
-            x-show.transition.opacity="checked.length"
-            @toggle-check.window="toggleCheck($event.detail)"
-            x-cloak
-    >
-        <div class="flex flex-wrap w-full py-3 px-6 border-t align-center items-center">
-            @foreach($this->actions as $action)
-                <div class="px-2 my-2 sm:my-0 {{ $action->getWidth() }}">
-                    @livewire($action->getName(), ['model' => $action->getModel(), 'icon' => $action->getIcon(), 'title' => $action->getTitle()], key($loop->index))
-                </div>
-            @endforeach
-        </div>
-    </div>
-    <div class="w-full overflow-hidden lg:overflow-visible">
-        <div class="w-full overflow-x-scroll overflow-y-visible lg:overflow-visible">
-            <table class="w-full">
+
+    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+            <table class="min-w-full">
                 <thead>
-                <tr class="bg-gray-300 text-gray-700">
+                <tr>
                     @foreach($this->columns as $column)
-                        <th class="border px-4 py-2 whitespace-no-wrap" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
+                        <th class="px-3 py-2 md:px-6 md:py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider" @if($column->getWidth()) style="width: {{ $column->getWidth() }}%;" @endif>
                             {!! $column->renderTitle($this->sort) !!}
                         </th>
                     @endforeach
                 </tr>
                 </thead>
-                <tbody>
-                @if(count($this->data->items()))
-                    @foreach($this->data->items() as $row)
-                        <tr class="even:bg-gray-100">
-                            @foreach($this->columns as $column)
-                                <td class="border px-4 py-2 {{ $column->getClass($row) }}">
-                                    {!! $column->renderIt($row) !!}
-                                </td>
-                            @endforeach
-                        </tr>
-                    @endforeach
-                @else
-                    @include('partials.empty-table')
-                @endif
+                <tbody class="bg-white">
+                @forelse($this->data->items() as $row)
+                    <tr>
+                        @foreach($this->columns as $column)
+                            <td class="p-2 md:p-4 xl:px-6 xl:text-base text-sm leading-6 md:leading-5 whitespace-no-wrap border-b border-gray-200 text-gray-700 {{ $column->getClass($row) }}">
+                                {!! $column->renderIt($row) !!}
+                            </td>
+                        @endforeach
+                    </tr>
+                @empty
+                    @include('wiretable::partials.empty-table')
+                @endforelse
                 </tbody>
+                @if(!is_null($this->data))
+                    <tfoot>
+                    <tr>
+                        <th colspan="100">
+                            {{ $this->data->links() }}
+                        </th>
+                    </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
-    </div>
-    <div class="font-semibold bg-gray-200 text-gray-700 py-3 px-6 mb-0">
-        @if($this->data !== null)
-            <div class="flex flex-col sm:flex-row items-center justify-between">
-                <div class="flex content-center text-gray-500 items-center">
-                    {{ __('Showing') }} {{ $this->data->firstItem() ?? 0 }} {{ __('to') }} {{ $this->data->lastItem() }} {{ __('from') }} {{ $this->data->total() }}
-                </div>
-                <div class="flex">
-                    {{ $this->data->links() }}
-                </div>
-            </div>
-        @endif
     </div>
 </div>

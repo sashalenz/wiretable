@@ -3,11 +3,11 @@
         <div class="relative" role="textbox">
             @if($this->selected)
                 @unless($required)
-                    <span class="absolute right-0 top-0 z-20" title="Remove all items" wire:click="setSelected(null)">×</span>
+                    <span class="absolute right-0 top-0 z-20" title="@lang('wiretable::remove_all_items')" wire:click="setSelected(null)">×</span>
                 @endif
                 {{ $this->selected->getDisplayName() }}
             @else
-                {{ $label ?? __('Please select') }}
+                {{ $label ?? __('wiretable::form.please_select') }}
             @endif
         </div>
     </div>
@@ -25,7 +25,7 @@
                         <li class="border-b hover:bg-gray-500 p-2 cursor-pointer" role="option" @if($item->{$item->getKeyName()} === $value) aria-selected="true" @endif wire:click="setSelected({{ $item->{$item->getKeyName()} }})">{{ $item->getDisplayName() }}</li>
                     @endforeach
                 @else
-                    <li class="text-gray-700 p-2">{{ __('Results not found') }}</li>
+                    <li class="text-gray-700 p-2">@lang('wiretable::form.results_not_found')</li>
                 @endif
             </ul>
         </div>

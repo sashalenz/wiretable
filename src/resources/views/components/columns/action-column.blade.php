@@ -1,5 +1,5 @@
-<div class="whitespace-no-wrap">
+<div class="relative flex justify-end items-center">
     @foreach($buttons as $button)
-        {!! $button->renderIt($row) !!}
+        {!! $button->title(null)->renderIt($row) !!}
     @endforeach
 </div>

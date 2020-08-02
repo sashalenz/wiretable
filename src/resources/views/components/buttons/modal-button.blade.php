@@ -1,8 +1,8 @@
-<button
-        x-data="{ url: '{{ $route }}' }"
-        class="text-gray-500 hover:text-blue-900 p-2 rounded text-lg {{ $class }}"
-        @click.prevent="$dispatch('open-modal', url)"
+<a href="#"
+   x-data="{ url: '{{ $route }}' }"
+   class="px-2 group flex items-center text-sm justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150 {{ $class }}"
+   @click.prevent="$dispatch('open-modal', url)"
 >
-    @if($icon)<i class="{{ $icon }}"></i>@endif
-    {{ $title }}
-</button>
+    @if($icon)@svg($icon, 'h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500')@endif
+    @if($title)<span class="ml-3">{{ $title }}</span>@endif
+</a>

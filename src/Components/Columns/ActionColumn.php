@@ -6,8 +6,8 @@ use Illuminate\View\View;
 
 class ActionColumn extends Column
 {
-    protected ?int $width = 5;
-    protected ?array $buttons = [];
+    private ?int $width = 5;
+    private ?array $buttons = [];
 
     /**
      * @param array $buttons

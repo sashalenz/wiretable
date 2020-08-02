@@ -1,48 +1,52 @@
-@if ($paginator->hasPages())
-    <nav role="navigation" aria-label="Pagination Navigation">
-        <ul class="flex justify-center text-sm">
+<div class="bg-white px-4 py-3 flex items-center justify-between sm:px-6">
+    <div class="hidden sm:block">
+        <p class="text-sm leading-5 text-gray-700">
+            @lang('wiretable::table.total', ['from' => $paginator->firstItem() ?? 0, 'to' => $paginator->lastItem(), 'total' => $paginator->total()])
+        </p>
+    </div>
+    @if ($paginator->hasPages())
+        <nav role="navigation" aria-label="Pagination Navigation" class="relative z-0 inline-flex shadow-sm">
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
-                <li aria-label="@lang('pagination.previous')">
-                    <span class="px-4 py-3 text-gray-500 block border border-r-0 border-gray-300 rounded-l" aria-hidden="true">&larr;</span>
-                </li>
+                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
+                      aria-hidden="true"
+                      aria-label="@lang('wiretable::table.previous')"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </span>
             @else
-                <li>
-                    <button wire:click="previousPage"
-                            rel="prev"
-                            class="btn rounded-l"
-                            aria-label="@lang('pagination.previous')"
-                    >
-                        &larr;
-                    </button>
-                </li>
+                <button wire:click="previousPage"
+                        rel="prev"
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                        aria-label="@lang('wiretable::table.previous')"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
             @endif
 
             {{-- Pagination Elements --}}
             @foreach ($elements as $element)
                 {{-- "Three Dots" Separator --}}
                 @if (is_string($element))
-                    <li aria-disabled="true" class="hidden sm:inline-block">
-                        <span class="px-4 py-3 block text-gray-500 border border-r-0 border-gray-300">{{ $element }}</span>
-                    </li>
+                    <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700">{{ $element }}</span>
                 @endif
 
                 {{-- Array Of Links --}}
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
                         @if ($page === $paginator->currentPage())
-                            <li aria-current="page">
-                                <span class="px-4 py-3 block text-white bg-blue-900 border border-r-0 border-gray-300">{{ $page }}</span>
-                            </li>
+                            <span class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-gray-100 text-sm leading-5 font-medium text-gray-700 cursor-not-allowed">{{ $page }}</span>
                         @else
-                            <li class="hidden sm:inline-block">
-                                <button wire:click="gotoPage({{ $page }})"
-                                        class="btn border-r-0"
-                                        aria-label="@lang('pagination.goto_page', ['page' => $page])"
-                                >
-                                    {{ $page }}
-                                </button>
-                            </li>
+                            <button wire:click="gotoPage({{ $page }})"
+                                    class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                    aria-label="@lang('wiretable::table.goto_page', ['page' => $page])"
+                            >
+                                {{ $page }}
+                            </button>
                         @endif
                     @endforeach
                 @endif
@@ -50,20 +54,25 @@
 
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
-                <li>
-                    <button wire:click="nextPage"
-                            rel="next"
-                            class="btn rounded-r"
-                            aria-label="@lang('pagination.next')"
-                    >
-                        &rarr;
-                    </button>
-                </li>
+                <button wire:click="previousPage"
+                        rel="prev"
+                        class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                        aria-label="@lang('wiretable::table.next')"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
             @else
-                <li aria-disabled="true" aria-label="@lang('pagination.next')">
-                    <span class="px-4 py-3 block text-gray-500 border border-gray-300 rounded-r" aria-hidden="true">&rarr;</span>
-                </li>
+                <span class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 text-sm leading-5 font-medium text-gray-500 bg-gray-100 cursor-not-allowed"
+                      aria-hidden="true"
+                      aria-label="@lang('wiretable::table.next')"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </span>
             @endif
-        </ul>
-    </nav>
-@endif
+        </nav>
+    @endif
+</div>

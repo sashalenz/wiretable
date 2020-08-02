@@ -3,11 +3,10 @@
 
 namespace Sashalenz\Wiretable;
 
-use App\Filters\SearchFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Component;
-use Livewire\WithPagination;
+use Sashalenz\Wiretable\Filters\SearchFilter;
 use Sashalenz\Wiretable\Components\Actions\Action;
 use Sashalenz\Wiretable\Components\Columns\ActionColumn;
 use Sashalenz\Wiretable\Components\Columns\CheckboxColumn;
@@ -15,6 +14,7 @@ use Sashalenz\Wiretable\Components\Columns\Column;
 use Sashalenz\Wiretable\Traits\WithFiltering;
 use Sashalenz\Wiretable\Traits\WithSearching;
 use Sashalenz\Wiretable\Traits\WithSorting;
+use Sashalenz\Wiretable\Traits\WithPagination;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\QueryBuilderRequest;
 
@@ -24,8 +24,6 @@ abstract class Wiretable extends Component
         WithFiltering,
         WithSorting,
         WithSearching;
-
-    public int $perPage = 20;
 
     protected string $model;
 
@@ -111,13 +109,11 @@ abstract class Wiretable extends Component
             ->defaultSort($this->defaultSort)
             ->allowedSorts(...$this->getAllowedSorts())
             ->when($this->search && !$this->disableSearch, new SearchFilter($this->search))
-            ->paginate($this->perPage)
-            ->onEachSide(1);
-    }
-
-    public function paginationView(): string
-    {
-        return 'wiretable::partials.pagination';
+            ->when(
+                $this->simplePagination === true,
+                fn (QueryBuilder $query) => $query->simplePaginate($this->perPage),
+                fn (QueryBuilder $query) => $query->paginate($this->perPage)->onEachSide(1)
+            );
     }
 
     protected function getActionColumn():? ActionColumn

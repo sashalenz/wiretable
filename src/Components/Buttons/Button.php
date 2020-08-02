@@ -125,7 +125,6 @@ abstract class Button extends Component
         return is_callable($this->routeCallback);
     }
 
-
     /**
      * @param callable $displayCondition
      * @return $this
@@ -134,6 +133,15 @@ abstract class Button extends Component
     {
         $this->displayCondition = $displayCondition;
         return $this;
+    }
+
+    /**
+     * @param $row
+     * @return bool
+     */
+    public function canDisplay($row): bool
+    {
+        return is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
     }
 
     /**
@@ -160,9 +168,7 @@ abstract class Button extends Component
      */
     public function renderIt($row)
     {
-        $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
-
-        if ((bool) $condition === false) {
+        if (!$this->canDisplay($row)) {
             return null;
         }
 

@@ -40,6 +40,6 @@ trait WithSorting
             ->filter(fn(Column $column) => $column->isSortable())
             ->map(fn(Column $column) => $column->getName())
             ->values()
-            ->toArray();
+            ->toArray() ?? [];
     }
 }

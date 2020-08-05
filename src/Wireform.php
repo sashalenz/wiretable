@@ -9,11 +9,12 @@ use Sashalenz\Wiretable\Components\Fields\Field;
 
 abstract class Wireform extends Component
 {
-    protected string $model;
+    protected $model;
 
     private function getRules(): array
     {
         return $this->fields()
+            ->filter(fn (Field $field) => $field->getRules())
             ->mapWithKeys(fn (Field $field) => [
                 $field->name => $field->getRules()
             ])

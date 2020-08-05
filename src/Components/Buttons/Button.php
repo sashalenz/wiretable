@@ -178,6 +178,7 @@ abstract class Button extends Component
 
         return $this->render()
             ->with([
+                'row' => $row,
                 'class' => $this->getClass($row),
                 'route' => $this->getRoute($row),
                 'icon' => $this->getIcon(),

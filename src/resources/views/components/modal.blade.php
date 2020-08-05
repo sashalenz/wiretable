@@ -1,7 +1,7 @@
 <div x-data="{ openModal: false }"
      x-cloak
      x-show="openModal"
-     class="fixed top-0 inset-x-0 px-4 pt-6 sm:inset-0 sm:p-0 sm:flex sm:items-center sm:justify-center z-40 overflow-hidden"
+     class="fixed top-0 inset-x-0 px-4 pt-6 sm:inset-0 sm:p-0 sm:flex sm:items-center sm:justify-center z-30 overflow-hidden"
      @open-modal.window="fetch($event.detail).then(response => response.text()).then(data => window.htmlToElement($refs.html, data)).then(() => window.livewire.rescan()).then(() => openModal = true)"
      @close-modal.window="openModal = false; setTimeout(() => { $refs.html.innerHTML = '' }, 300)"
 >

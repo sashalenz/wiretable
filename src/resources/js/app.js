@@ -19,24 +19,24 @@ window.toggleHandler = function() {
     }
 };
 
-window.modal = function() {
+window.alert = function () {
     return {
-        state: 'CLOSED',
-        html: '',
-        open(url) {
-            this.state = 'TRANSITION';
-            fetch(url)
-                .then(response => response.text())
-                .then(data => this.html = data);
-            
-            setTimeout(() => { this.state = 'OPEN' }, 50)
+        showAlert: false,
+        status: '',
+        message: '',
+        description: '',
+        show(event) {
+            this.showAlert = true;
+            this.status = event.status || 'info';
+            this.message = event.message;
+            this.description = event.description || '';
+            setTimeout(() => this.showAlert = false, 5000);
         },
-        close() {
-            this.state = 'TRANSITION';
-            this.html = '';
-            setTimeout(() => { this.state = 'CLOSED' }, 300)
-        },
-        isOpen() { return this.state === 'OPEN' },
-        isOpening() { return this.state !== 'CLOSED' },
+        hide() {
+            this.showAlert = false;
+            this.status = '';
+            this.message = '';
+            this.description = '';
+        }
     }
 };

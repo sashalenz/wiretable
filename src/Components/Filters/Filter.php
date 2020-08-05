@@ -7,64 +7,39 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 abstract class Filter extends AllowedFilter
 {
-    private string $width = 'w-full sm:w-1/2 lg:w-1/4';
-    private array $options = [];
-    private ?string $label = null;
-    private bool $required = false;
-    private ?string $value = null;
+    protected int $size = 6;
+    protected ?string $title = null;
+    protected ?string $placeholder = null;
+    protected ?string $value = null;
 
     /**
-     * @param array $options
+     * @param string $title
      * @return $this
      */
-    public function options(array $options): self
+    public function title(string $title): self
     {
-        $this->options = $options;
+        $this->title = $title;
         return $this;
     }
 
     /**
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $label
+     * @param string $placeholder
      * @return $this
      */
-    public function label(string $label): self
+    public function placeholder(string $placeholder): self
     {
-        $this->label = $label;
+        $this->placeholder = $placeholder;
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return $this->label ?? $this->name;
-    }
-
-    /**
-     * @param string $width
+     * @param int $size
      * @return $this
      */
-    public function width(string $width): self
+    public function size(int $size): self
     {
-        $this->width = $width;
+        $this->size = $size;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWidth(): string
-    {
-        return $this->width;
     }
 
     /**
@@ -77,25 +52,11 @@ abstract class Filter extends AllowedFilter
         return $this;
     }
 
-    public function getValue(?string $value)
+    protected function getValue(?string $value = null)
     {
         $newValue = method_exists($this, 'castValue') ? $this->castValue($value) : $value;
         return ($newValue !== $this->getDefault()) ? $newValue : null;
     }
 
-    /**
-     * @return View
-     */
-    public function renderIt(): View
-    {
-        return $this->render()->with([
-            'name' => $this->getName(),
-            'label' => $this->getLabel(),
-            'options' => $this->getOptions(),
-            'required' => $this->required,
-            'value' => $this->value ?? $this->default
-        ]);
-    }
-
-    abstract public function render(): View;
+    abstract public function renderIt(): View;
 }

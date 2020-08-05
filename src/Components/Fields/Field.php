@@ -19,15 +19,33 @@ abstract class Field extends Component
     public ?string $help = null;
     public string $type = 'text';
     public int $size = 6;
+    public $value = null;
 
     protected array $rules = [];
     protected Collection $classes;
     protected ?Closure $styleCallback = null;
     protected ?Closure $displayCondition = null;
 
+    protected $except = [
+        'renderIt',
+        'make',
+        'setValue',
+        'setIcon',
+        'setRules',
+        'setType',
+        'setSize',
+        'isRequired',
+        'setPlaceholder',
+        'setHelp',
+        'addClass',
+        'getRules',
+        'setOptions'
+    ];
+
     public function __construct(
         string $name,
         ?string $title = null,
+        $value = null,
         ?string $icon = null,
         bool $required = false,
         ?string $placeholder = null,
@@ -37,6 +55,7 @@ abstract class Field extends Component
     ) {
         $this->name = $name;
         $this->title = $title;
+        $this->value = $value;
         $this->icon = $icon;
         $this->required = $required;
         $this->placeholder = $placeholder;
@@ -48,22 +67,22 @@ abstract class Field extends Component
     }
 
     /**
-     * @param string $title
+     * @param string $icon
      * @return $this
      */
-    protected function setTitle(string $title): self
+    public function setIcon(string $icon): self
     {
-        $this->title = $title;
+        $this->icon = $icon;
         return $this;
     }
 
     /**
-     * @param string $icon
+     * @param $value
      * @return $this
      */
-    protected function icon(string $icon): self
+    public function setValue($value): self
     {
-        $this->icon = $icon;
+        $this->value = $value;
         return $this;
     }
 
@@ -71,7 +90,7 @@ abstract class Field extends Component
      * @param string $type
      * @return $this
      */
-    protected function type(string $type): self
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;
@@ -81,7 +100,7 @@ abstract class Field extends Component
      * @param int $size
      * @return $this
      */
-    protected function size(int $size): self
+    public function setSize(int $size): self
     {
         $this->size = $size;
         return $this;
@@ -91,7 +110,7 @@ abstract class Field extends Component
      * @param string|null $placeholder
      * @return $this
      */
-    protected function placeholder(string $placeholder): self
+    public function setPlaceholder(string $placeholder): self
     {
         $this->placeholder = $placeholder;
         return $this;
@@ -101,7 +120,7 @@ abstract class Field extends Component
      * @param string $help
      * @return $this
      */
-    protected function help(string $help): self
+    public function setHelp(string $help): self
     {
         $this->help = $help;
         return $this;
@@ -111,7 +130,7 @@ abstract class Field extends Component
      * @param array $rules
      * @return $this
      */
-    protected function rules(array $rules): self
+    public function setRules(array $rules): self
     {
         $this->rules = $rules;
         return $this;
@@ -120,7 +139,7 @@ abstract class Field extends Component
     /**
      * @return $this
      */
-    protected function required(): self
+    public function isRequired(): self
     {
         $this->required = true;
         return $this;
@@ -130,7 +149,7 @@ abstract class Field extends Component
      * @param mixed ...$classes
      * @return $this
      */
-    protected function class(...$classes): self
+    public function addClass(...$classes): self
     {
         $this->classes->push($classes);
         return $this;
@@ -148,9 +167,9 @@ abstract class Field extends Component
             throw new RuntimeException('Return value must be a string');
         }
 
-        $this->class->push($class);
+        $this->classes->push($class);
 
-        return $this->class
+        return $this->classes
             ->filter()
             ->flatten()
             ->implode(' ');
@@ -159,7 +178,7 @@ abstract class Field extends Component
     /**
      * @return array
      */
-    protected function getRules(): array
+    public function getRules(): array
     {
         return $this->rules;
     }
@@ -184,20 +203,29 @@ abstract class Field extends Component
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @return static
-     */
-    public static function make(string $name)
+    public function getDataArray(): array
     {
-        return new static($name);
+        return collect($this->data())
+            ->filter( fn ($value, $key) => !in_array($key, ['getDataArray', 'attributes']))
+            ->mapWithKeys( fn ($value, $key) => [$key => is_null($value) ? '' : $value])
+            ->toArray();
     }
 
     /**
-     * @param Model $model
+     * @param string $name
+     * @param string|null $title
+     * @return static
+     */
+    public static function make(string $name, ?string $title = null)
+    {
+        return new static($name, $title);
+    }
+
+    /**
+     * @param Model|null $model
      * @return View|null
      */
-    public function renderIt(Model $model):? View
+    public function renderIt(?Model $model = null):? View
     {
         $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $model) : true;
 
@@ -205,11 +233,16 @@ abstract class Field extends Component
             return null;
         }
 
-        return $this->render()
+        info(session()->get('errors'));
+
+        return $this
+//            ->withAttributes([
+//                'class' => ($model) ? $this->getClass($model) : null
+//            ])
+            ->render()
+            ->with($this->data())
             ->with([
-                'class' => $this->getClass($model)
+                'hasError' => false
             ]);
     }
-
-    abstract public function render(): View;
 }

@@ -1,6 +1,6 @@
 <div class="flex flex-col space-y-3">
-    <div class="sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 overflow-x-auto" x-data="{ filtersCount: {{ count($this->filters) }}, filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
-        <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+    <div class="sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" x-data="{ filtersCount: {{ count($this->filters) }}, filtersAreShown: {{ is_null($this->filter) ? 'false' : 'true' }} }">
+        <div class="align-middle w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
             <div class="px-3 md:px-6 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider flex flex-col md:flex-row justify-between items-center">
                 <div class="flex-1 flex uppercase align-center items-center md:text-left content-center mb-2 sm:mb-0 py-2">
                     <div wire:offline>[OFFLINE]</div>
@@ -38,7 +38,7 @@
                             <path d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path>
                         </svg>
                     </a>
-                    <a href="#" class="text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150" wire:click.prevent="refresh">
+                    <a href="#" class="text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 focus:bg-gray-100 transition ease-in-out duration-150" wire:click.prevent="refresh" @refresh-table.window="@this.call('refresh')">
                         <svg class="w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
@@ -47,14 +47,12 @@
             </div>
 
             <div
-                    class="flex justify-between bg-white px-6 py-4 whitespace-no-wrap border-t border-gray-200 last:border-0 text-gray-700 flex flex-wrap w-full align-center items-center"
+                    class="flex justify-between bg-white px-6 py-2 whitespace-no-wrap border-t border-gray-200 last:border-0 text-gray-700 grid grid-cols-1 row-gap-6 col-gap-4 sm:grid-cols-6 align-center items-center"
                     x-show.transition.opacity="filtersCount && filtersAreShown"
                     x-cloak
             >
                 @foreach($this->filters as $filter)
-                    <div class="px-2 my-2 sm:my-0 {{ $filter->getWidth() }}">
-                        {!! $filter->renderIt() !!}
-                    </div>
+                    {!! $filter->renderIt() !!}
                 @endforeach
             </div>
             <div
@@ -104,16 +102,8 @@
                     @include('wiretable::partials.empty-table')
                 @endforelse
                 </tbody>
-                @if(!is_null($this->data))
-                    <tfoot>
-                    <tr>
-                        <th colspan="100">
-                            {{ $this->data->links() }}
-                        </th>
-                    </tr>
-                    </tfoot>
-                @endif
             </table>
+            {{ $this->data->links() }}
         </div>
     </div>
 </div>

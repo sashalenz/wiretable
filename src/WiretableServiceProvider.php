@@ -4,6 +4,8 @@ namespace Sashalenz\Wiretable;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Sashalenz\Wiretable\Components\Alert;
+use Sashalenz\Wiretable\Components\Fields\SelectField;
 use Sashalenz\Wiretable\Components\Fields\TextField;
 use Sashalenz\Wiretable\Components\Form;
 use Sashalenz\Wiretable\Components\Modal;
@@ -35,7 +37,9 @@ class WiretableServiceProvider extends ServiceProvider
             Table::class,
             Modal::class,
             Form::class,
-            TextField::class
+            Alert::class,
+            TextField::class,
+            SelectField::class
         ]);
 
         Livewire::component('model-search', ModelSearch::class);

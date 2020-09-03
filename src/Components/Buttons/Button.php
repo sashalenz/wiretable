@@ -54,7 +54,7 @@ abstract class Button extends Component
     /**
      * @return string|null
      */
-    private function getIcon(): ?string
+    protected function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -81,7 +81,7 @@ abstract class Button extends Component
      * @param $row
      * @return string|null
      */
-    private function getClass($row): ?string
+    protected function getClass($row): ?string
     {
         $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $row) : null;
 
@@ -120,7 +120,7 @@ abstract class Button extends Component
     /**
      * @return bool
      */
-    private function hasRouteCallback(): bool
+    protected function hasRouteCallback(): bool
     {
         return is_callable($this->routeCallback);
     }
@@ -139,7 +139,7 @@ abstract class Button extends Component
      * @param $row
      * @return bool
      */
-    private function canDisplay($row): bool
+    protected function canDisplay($row): bool
     {
         return is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $row) : true;
     }
@@ -148,7 +148,7 @@ abstract class Button extends Component
      * @param $row
      * @return string|null
      */
-    private function getRoute($row):? string
+    protected function getRoute($row):? string
     {
         return is_callable($this->routeCallback) ? call_user_func($this->routeCallback, $row) : null;
     }

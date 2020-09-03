@@ -26,7 +26,6 @@ abstract class Wiretable extends Component
         WithActions;
 
     protected string $model;
-    public array $via;
 
     protected $request;
 
@@ -35,11 +34,6 @@ abstract class Wiretable extends Component
         'resetTable',
         'addFilter'
     ];
-
-    public function mount(array $via = []): void
-    {
-        $this->via = $via;
-    }
 
     public function refresh(): void
     {
@@ -94,10 +88,6 @@ abstract class Wiretable extends Component
     {
         return QueryBuilder::for($this->query(), $this->request())
             ->when(
-                $this->via,
-                fn (QueryBuilder $query) => $query->where($this->via)
-            )
-            ->when(
                 method_exists($this, 'initializeWithFiltering'),
                 fn (QueryBuilder $query) => $query
                     ->allowedFilters($this->getFiltersProperty()->toArray())
@@ -105,7 +95,7 @@ abstract class Wiretable extends Component
             ->when(
                 method_exists($this, 'initializeWithSorting'),
                 fn (QueryBuilder $query) => $query
-                    ->defaultSort(self::$defaultSort)
+                    ->defaultSort($this->defaultSort)
                     ->allowedSorts(...$this->getAllowedSorts())
             )
             ->when(
@@ -126,7 +116,7 @@ abstract class Wiretable extends Component
                 method_exists($this, 'initializeWithSorting'),
                 fn (Collection $collection) => $collection->put(
                     self::$sortKey,
-                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : self::$defaultSort
+                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : $this->defaultSort
                 )
             )
             ->when(

@@ -6,24 +6,24 @@ use Sashalenz\Wiretable\Components\Columns\Column;
 
 trait WithSorting
 {
-    protected static string $defaultSort = '-id';
+    protected string $defaultSort = '-id';
     protected static string $sortKey = 'sort';
 
     protected function initializeWithSorting(): void
     {
-        $this->updatesQueryString[self::$sortKey] = ['except' => self::$defaultSort];
+        $this->updatesQueryString[self::$sortKey] = ['except' => $this->defaultSort];
 
         $this->setSort($this->resolveSort());
     }
 
     protected function resetSort(): void
     {
-        $this->setSort(self::$defaultSort);
+        $this->setSort($this->defaultSort);
     }
 
     private function resolveSort()
     {
-        return request()->query(self::$sortKey, self::$defaultSort);
+        return request()->query(self::$sortKey, $this->defaultSort);
     }
 
     private function setSort($sort): void

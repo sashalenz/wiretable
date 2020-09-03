@@ -20,6 +20,7 @@ class SearchFilter
                 $searchable = $query->getModel()->getSearchable();
                 $relations = $query->getModel()->getSearchableRelations();
                 $table = $query->getModel()->getTable();
+                $key = $query->getModel()->getKeyName();
 
                 foreach ($searchable as $field) {
                     $query->orWhere(function (Builder $query) use ($table, $field) {
@@ -35,10 +36,10 @@ class SearchFilter
                     });
                 }
 
-                return $query->orWhere(function (Builder $query) use ($table) {
+                return $query->orWhere(function (Builder $query) use ($table, $key) {
                     foreach (explode(',', $this->value) as $id) {
                         if (is_numeric($id)) {
-                            $query->orWhere($table.'.id', $id);
+                            $query->orWhere($table . '.' . $key, $id);
                         }
                     }
                 });

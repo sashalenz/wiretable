@@ -2,18 +2,19 @@
 
 namespace Sashalenz\Wiretable\Components\Columns;
 
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class ActionColumn extends Column
 {
     private ?int $width = 5;
-    private ?array $buttons = [];
+    private ?Collection $buttons;
 
     /**
-     * @param array $buttons
+     * @param Collection $buttons
      * @return $this
      */
-    public function withButtons(array $buttons = []): self
+    public function withButtons(Collection $buttons): self
     {
         $this->buttons = $buttons;
         return $this;
@@ -26,6 +27,7 @@ class ActionColumn extends Column
     {
         return view('wiretable::components.columns.action-column', [
             'buttons' => $this->buttons
+                ->reject(fn ($button) => is_null($button))
         ]);
     }
 }

@@ -1,11 +1,9 @@
-<div class="whitespace-no-wrap" x-data="{ checkAll: false }">
-    <label class="inline-flex items-center" x-ref="checkbox">
-        <input
-                type="checkbox"
-                class="form-checkbox h-5 w-5 text-primary-500"
-                x-model="checkAll"
-                @toggle-check.window="checkAll = false"
-                @click="$dispatch('toggle-all-check', checkAll)"
-        >
-    </label>
+<div class="flex items-center" x-data="{ checkAll: false }">
+    <input type="checkbox"
+           x-ref="checkbox"
+           x-model="checkAll"
+           @toggle-check.window="checkAll = false"
+           @click="$dispatch('toggle-all-check', checkAll)"
+           class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+    >
 </div>

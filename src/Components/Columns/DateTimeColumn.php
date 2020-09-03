@@ -9,6 +9,12 @@ class DateTimeColumn extends Column
 {
     public string $format = 'Y-m-d H:i';
 
+    public function __construct($name)
+    {
+        parent::__construct($name);
+        $this->class('whitespace-no-wrap');
+    }
+
     /**
      * @param string $format
      * @return $this

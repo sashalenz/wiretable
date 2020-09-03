@@ -4,29 +4,42 @@ namespace Sashalenz\Wiretable\Traits;
 
 trait WithSearching
 {
-    public string $search = '';
     public bool $disableSearch = false;
+    protected static string $searchKey = 'search';
 
-    public function initializeWithSearching(): void
+    protected function initializeWithSearching(): void
     {
-        $this->search = $this->resolveSearching();
-        $this->request()->query->set('search', $this->search);
+        $this->updatesQueryString[self::$searchKey] = ['except' => ''];
+
+        $this->setSearch($this->resolveSearch());
     }
 
-    public function resolveSearching()
+    protected function resetSearch(): void
     {
-        return request()->query('search', $this->search);
+        $this->setSearch('');
     }
 
-    public function updatingSearch(): void
+    private function resolveSearch()
     {
+        return request()->query(self::$searchKey, '');
+    }
+
+    private function setSearch($search): void
+    {
+        $this->{self::$searchKey} = (string) $search;
+    }
+
+    public function searchBy($search): void
+    {
+        $this->setSearch($search);
+
         if (method_exists($this, 'resetPage')) {
             $this->resetPage();
         }
     }
 
-    public function resetSearch(): void
+    public function getSearchProperty(): string
     {
-        $this->search = '';
+        return $this->{self::$searchKey};
     }
 }

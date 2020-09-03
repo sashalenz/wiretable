@@ -9,7 +9,7 @@ abstract class Action
 {
     private string $name;
     private string $model;
-    private string $width = 'w-full sm:w-1/2 lg:w-1/4';
+    private int $size = 6;
     private ?string $title = null;
     private ?string $icon = null;
     private Collection $class;
@@ -108,21 +108,21 @@ abstract class Action
     }
 
     /**
-     * @param string $width
+     * @param string $size
      * @return $this
      */
-    public function width(string $width): self
+    public function size(string $size): self
     {
-        $this->width = $width;
+        $this->size = $size;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getWidth(): string
+    public function getSize(): string
     {
-        return $this->width;
+        return $this->size;
     }
 
     /**

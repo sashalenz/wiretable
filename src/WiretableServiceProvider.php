@@ -2,18 +2,27 @@
 
 namespace Sashalenz\Wiretable;
 
+use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use ReflectionException;
 use Sashalenz\Wiretable\Components\Alert;
+use Sashalenz\Wiretable\Components\Fields\LayoutField;
 use Sashalenz\Wiretable\Components\Fields\SelectField;
 use Sashalenz\Wiretable\Components\Fields\TextField;
 use Sashalenz\Wiretable\Components\Form;
 use Sashalenz\Wiretable\Components\Modal;
 use Sashalenz\Wiretable\Components\Table;
 use Sashalenz\Wiretable\Livewire\ModelSearch;
+use Sashalenz\Wiretable\Macros\RouteMacros;
+use Sashalenz\Wiretable\Macros\RouterMacros;
 
 class WiretableServiceProvider extends ServiceProvider
 {
+    /**
+     * @throws ReflectionException
+     */
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/resources/views', 'wiretable');
@@ -22,15 +31,15 @@ class WiretableServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/resources/views' => $this->app->resourcePath('views/vendor/wiretable'),
-            ], 'views');
+            ], 'wiretable:views');
 
             $this->publishes([
                 __DIR__.'/resources/js' => public_path('vendor/wiretable'),
-            ], 'views');
+            ], 'wiretable:assets');
 
             $this->publishes([
                 __DIR__.'/resources/lang' => $this->app->resourcePath('lang/vendor/wiretable'),
-            ], 'translation');
+            ], 'wiretable:translation');
         }
 
         $this->loadViewComponentsAs('wiretable', [
@@ -38,11 +47,14 @@ class WiretableServiceProvider extends ServiceProvider
             Modal::class,
             Form::class,
             Alert::class,
+            LayoutField::class,
             TextField::class,
             SelectField::class
         ]);
 
         Livewire::component('model-search', ModelSearch::class);
+
+        Router::mixin(new RouterMacros);
     }
 
     public function register(): void

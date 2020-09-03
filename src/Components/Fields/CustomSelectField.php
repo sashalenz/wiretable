@@ -1,0 +1,29 @@
+<?php
+
+namespace Sashalenz\Wiretable\Components\Fields;
+
+use Illuminate\View\View;
+
+class CustomSelectField extends Field
+{
+    public ?string $model = null;
+
+    public function __construct(string $name, ?string $title = null, $value = null, ?bool $required = false, ?string $placeholder = null, ?string $default = null, ?string $help = null, ?int $size = 6, $model = null)
+    {
+        $this->model = $model;
+        parent::__construct($name, $title, $value, $required, $placeholder, $default, $help, $size);
+    }
+
+    public function setModel(string $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+
+    public function render(): View
+    {
+        return view('wiretable::components.fields.custom-select-field');
+    }
+}

@@ -2,8 +2,8 @@
 
 namespace Sashalenz\Wiretable\Livewire;
 
-use App\Filters\SearchFilter;
 use Livewire\Component;
+use Sashalenz\Wiretable\Filters\SearchFilter;
 
 class ModelSearch extends Component
 {
@@ -11,15 +11,16 @@ class ModelSearch extends Component
     public bool $required = false;
     public string $name;
     public string $model;
-    public ?string $label = null;
+    public ?string $placeholder = null;
     public ?string $value = null;
     public bool $isOpen = false;
+    public int $limit = 20;
 
-    public function mount(string $name, string $model, string $label = null, string $value = null, bool $required = false): void
+    public function mount(string $name, string $model, string $placeholder = null, string $value = null, bool $required = false): void
     {
         $this->name = $name;
         $this->required = $required;
-        $this->label = $label;
+        $this->placeholder = $placeholder;
         $this->value = $value;
         $this->model = $model;
     }
@@ -27,10 +28,14 @@ class ModelSearch extends Component
     public function setSelected($value): void
     {
         $this->search = '';
-        $this->value = $value;
         $this->isOpen = false;
 
-        $this->emitUp('addFilter', $this->name, $value);
+        if ($this->value === $value) {
+            return;
+        }
+
+        $this->value = $value;
+        $this->emitUp('updatedChild', $this->name, $this->value);
     }
 
     public function getSelectedProperty()
@@ -47,7 +52,7 @@ class ModelSearch extends Component
         return $this->model::query()
             ->when($this->search, new SearchFilter($this->search))
             ->orderBy((new $this->model)->getKeyName())
-            ->take(20)
+            ->take($this->limit)
             ->get();
     }
 

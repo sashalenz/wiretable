@@ -14,12 +14,12 @@ abstract class Column extends Component
     private Collection $class;
     private ?string $title = null;
     private bool $sortable = false;
-    private ?string $icon = null;
     private ?int $width = null;
     private ?string $highlight = null;
     private ?Closure $styleCallback = null;
     private ?Closure $displayCallback = null;
     private ?Closure $displayCondition = null;
+    private ?string $currentSort = null;
 
     protected bool $hasHighlight = false;
 
@@ -62,24 +62,6 @@ abstract class Column extends Component
     public function isSortable(): bool
     {
         return $this->sortable;
-    }
-
-    /**
-     * @param string|null $icon
-     * @return $this
-     */
-    public function icon(?string $icon): self
-    {
-        $this->icon = $icon;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getIcon(): ?string
-    {
-        return $this->icon;
     }
 
     /**
@@ -159,7 +141,7 @@ abstract class Column extends Component
     /**
      * @return string|null
      */
-    public function getHighlight():? string
+    private function getHighlight():? string
     {
         return $this->highlight;
     }
@@ -194,9 +176,15 @@ abstract class Column extends Component
         return $this;
     }
 
-    public function toCenter(): Column
+    public function toCenter(): self
     {
         $this->class->push('text-center');
+        return $this;
+    }
+
+    public function setCurrentSort($sort): self
+    {
+        $this->currentSort = $sort;
         return $this;
     }
 
@@ -218,25 +206,19 @@ abstract class Column extends Component
     }
 
     /**
-     * @param string|null $sort
      * @return \Illuminate\Contracts\View\Factory|View|string|null
      */
-    public function renderTitle(?string $sort = null)
+    public function renderTitle()
     {
-        if ($this->isSortable()) {
+        if ($this->isSortable() && !is_null($this->currentSort)) {
             return view('wiretable::partials.table-title')
                 ->with([
                     'name' => $this->getName(),
-                    'icon' => $this->getIcon(),
                     'title' => $this->getTitle(),
-                    'isCurrentSort' => str_replace('-', '', $sort) === $this->getName(),
-                    'isSortUp' => $sort === $this->getName(),
-                    'sort' => $sort
+                    'isCurrentSort' => str_replace('-', '', $this->currentSort) === $this->getName(),
+                    'isSortUp' => $this->currentSort === $this->getName(),
+                    'sort' => $this->currentSort
                 ]);
-        }
-
-        if ($this->getIcon()) {
-            return "<i class=\"far {$this->getIcon()}\"></i>";
         }
 
         return $this->getTitle();
@@ -258,6 +240,8 @@ abstract class Column extends Component
             return $this
                 ->render()
                 ->with([
+                    'id' => $row->{$row->getKeyName()},
+                    'data' => $row->{$this->getName()},
                     'row' => $row
                 ]);
         }

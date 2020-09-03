@@ -1,20 +1,18 @@
 <?php
 
-
 namespace Sashalenz\Wiretable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Component;
-use Sashalenz\Wiretable\Filters\SearchFilter;
-use Sashalenz\Wiretable\Components\Actions\Action;
-use Sashalenz\Wiretable\Components\Columns\ActionColumn;
-use Sashalenz\Wiretable\Components\Columns\CheckboxColumn;
 use Sashalenz\Wiretable\Components\Columns\Column;
+use Sashalenz\Wiretable\Filters\SearchFilter;
+use Sashalenz\Wiretable\Traits\WithActions;
+use Sashalenz\Wiretable\Traits\WithButtons;
 use Sashalenz\Wiretable\Traits\WithFiltering;
+use Sashalenz\Wiretable\Traits\WithPagination;
 use Sashalenz\Wiretable\Traits\WithSearching;
 use Sashalenz\Wiretable\Traits\WithSorting;
-use Sashalenz\Wiretable\Traits\WithPagination;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\QueryBuilderRequest;
 
@@ -23,9 +21,12 @@ abstract class Wiretable extends Component
     use WithPagination,
         WithFiltering,
         WithSorting,
-        WithSearching;
+        WithSearching,
+        WithButtons,
+        WithActions;
 
     protected string $model;
+    public array $via;
 
     protected $request;
 
@@ -34,6 +35,11 @@ abstract class Wiretable extends Component
         'resetTable',
         'addFilter'
     ];
+
+    public function mount(array $via = []): void
+    {
+        $this->via = $via;
+    }
 
     public function refresh(): void
     {
@@ -60,55 +66,52 @@ abstract class Wiretable extends Component
         return $this->request;
     }
 
-    public function getUpdatesQueryString(): array
-    {
-        return array_merge($this->updatesQueryString, [
-            'filter' => ['except' => ''],
-            'search' => ['except' => ''],
-            'page' => ['except' => 1],
-            'sort' => ['except' => $this->defaultSort]
-        ]);
-    }
-
-    public function getSortProperty(): string
-    {
-        return $this->sort;
-    }
-
-    public function getColumnsProperty(): array
+    public function getColumnsProperty(): Collection
     {
         $actionColumn = $this->getActionColumn();
         $checkboxColumn = $this->getCheckboxColumn();
 
         return $this->columns()
-            ->each(
-                fn (Column $column) => !is_null($this->search) && $column->setHighlight($this->search)
+            ->when(
+                method_exists($this,'initializeWithSearching') && !is_null($this->getSearchProperty()),
+                fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setHighlight($this->getSearchProperty()))
             )
             ->when(
-                !is_null($actionColumn),
+                method_exists($this,'initializeWithSorting') && !is_null($this->getSortProperty()),
+                fn (Collection $rows) => $rows->each(fn (Column $column) => $column->setCurrentSort($this->getSortProperty()))
+            )
+            ->when(
+                method_exists($this,'initializeWithButtons') && !is_null($actionColumn),
                 fn (Collection $rows) => $rows->push($actionColumn)
             )
             ->when(
-                !is_null($checkboxColumn),
+                method_exists($this,'initializeWithActions') && !is_null($checkboxColumn),
                 fn (Collection $rows) => $rows->prepend($checkboxColumn)
-            )
-            ->toArray();
-    }
-
-    public function getActionsProperty(): array
-    {
-        return $this->actions()
-            ->each(fn (Action $action) => $action->setModel($this->model))
-            ->toArray();
+            );
     }
 
     public function getDataProperty()
     {
         return QueryBuilder::for($this->query(), $this->request())
-            ->allowedFilters($this->filters()->toArray())
-            ->defaultSort($this->defaultSort)
-            ->allowedSorts(...$this->getAllowedSorts())
-            ->when($this->search && !$this->disableSearch, new SearchFilter($this->search))
+            ->when(
+                $this->via,
+                fn (QueryBuilder $query) => $query->where($this->via)
+            )
+            ->when(
+                method_exists($this, 'initializeWithFiltering'),
+                fn (QueryBuilder $query) => $query
+                    ->allowedFilters($this->getFiltersProperty()->toArray())
+            )
+            ->when(
+                method_exists($this, 'initializeWithSorting'),
+                fn (QueryBuilder $query) => $query
+                    ->defaultSort(self::$defaultSort)
+                    ->allowedSorts(...$this->getAllowedSorts())
+            )
+            ->when(
+                method_exists($this, 'initializeWithSearching') && !$this->disableSearch && $this->getSearchProperty(),
+                new SearchFilter($this->getSearchProperty())
+            )
             ->when(
                 $this->simplePagination === true,
                 fn (QueryBuilder $query) => $query->simplePaginate($this->perPage),
@@ -116,41 +119,48 @@ abstract class Wiretable extends Component
             );
     }
 
-    protected function getActionColumn():? ActionColumn
+    public function getPublicPropertiesDefinedBySubClass(): array
     {
-        if (!$this->buttons()->count()) {
-            return null;
-        }
-
-        return ActionColumn::make('Action')
-            ->withButtons($this->buttons()->toArray());
+        return collect(parent::getPublicPropertiesDefinedBySubClass())
+            ->when(
+                method_exists($this, 'initializeWithSorting'),
+                fn (Collection $collection) => $collection->put(
+                    self::$sortKey,
+                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : self::$defaultSort
+                )
+            )
+            ->when(
+                method_exists($this, 'initializeWithPagination'),
+                fn (Collection $collection) => $collection->put(
+                    self::$pageKey,
+                    property_exists($this, self::$pageKey) ? $this->{self::$pageKey} : 1
+                )
+            )
+            ->when(
+                method_exists($this, 'initializeWithSearching'),
+                fn (Collection $collection) => $collection->put(
+                    self::$searchKey,
+                    property_exists($this, self::$searchKey) ? $this->{self::$searchKey} : ''
+                )
+            )
+            ->when(
+                method_exists($this, 'initializeWithFiltering'),
+                fn (Collection $collection) => $collection->put(
+                    self::$filterKey,
+                    property_exists($this, self::$filterKey) ? $this->{self::$filterKey} : ''
+                )
+            )
+            ->toArray();
     }
 
-    protected function getCheckboxColumn():? CheckboxColumn
+    public function render()
     {
-        if (!$this->actions()->count()) {
-            return null;
-        }
-
-        return CheckboxColumn::make('Checkbox');
+        return view('wiretable::defaults.index');
     }
 
     abstract public function getTitleProperty(): string;
 
     abstract protected function query(): Builder;
 
-    protected function columns(): Collection
-    {
-        return collect();
-    }
-
-    protected function buttons(): Collection
-    {
-        return collect();
-    }
-
-    protected function actions(): Collection
-    {
-        return collect();
-    }
+    abstract protected function columns(): Collection;
 }

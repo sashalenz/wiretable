@@ -1,12 +1,8 @@
-<span wire:click="$set('sort', '{{ ($sort !== $name) ? $name : sprintf('-%s', $name) }}')" class="cursor-pointer flex justify-between whitespace-no-wrap">
-    @if($icon)
-        @svg($icon, 'w-4 h-4')
-    @else
-        {!! $title !!}
-    @endif
+<span wire:click="sortBy('{{ $name }}')" class="cursor-pointer flex justify-between whitespace-no-wrap">
+    {!! $title !!}
     @unless($isCurrentSort)
-        <svg class="w-4 h-4 ml-2 text-gray-300" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 ml-2 text-gray-300">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
         </svg>
     @else
         @if($isSortUp)

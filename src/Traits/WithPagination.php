@@ -6,59 +6,62 @@ use Illuminate\Pagination\Paginator;
 
 trait WithPagination
 {
-    public int $page = 1;
     public int $perPage = 20;
     public bool $simplePagination = false;
+    protected static string $pageKey = 'page';
 
-    public function getUpdatesQueryString(): array
+    protected function initializeWithPagination(): void
     {
-        return array_merge(['page' => ['except' => 1]], $this->updatesQueryString);
-    }
+        $this->updatesQueryString[self::$pageKey] = ['except' => 1];
 
-    public function initializeWithPagination(): void
-    {
-        $this->page = $this->resolvePage();
+        $this->setPage($this->resolvePage());
 
-        Paginator::currentPageResolver(function () {
-            return $this->page;
-        });
-
+        Paginator::currentPageResolver(fn () => $this->{self::$pageKey});
         Paginator::defaultView($this->paginationView());
         Paginator::defaultSimpleView($this->simplePaginationView());
     }
 
-    public function paginationView(): string
+    protected function paginationView(): string
     {
         return 'wiretable::partials.pagination';
     }
 
-    public function simplePaginationView(): string
+    protected function simplePaginationView(): string
     {
         return 'wiretable::partials.simple-pagination';
     }
 
-    public function previousPage(): void
+    protected function resetPage(): void
     {
-        --$this->page;
+        $this->setPage(1);
     }
 
-    public function nextPage(): void
+    private function resolvePage()
     {
-        ++$this->page;
+        return request()->query(self::$pageKey, 1);
+    }
+
+    private function setPage($page): void
+    {
+        $this->{self::$pageKey} = (int) $page;
     }
 
     public function gotoPage($page): void
     {
-        $this->page = $page;
+        $this->setPage($page);
     }
 
-    public function resetPage(): void
+    public function previousPage(): void
     {
-        $this->page = 1;
+        if ($this->{self::$pageKey} === 1) {
+            return;
+        }
+
+        $this->setPage(--$this->{self::$pageKey});
     }
 
-    public function resolvePage()
+    public function nextPage(): void
     {
-        return request()->query('page', $this->page);
+        $this->setPage(++$this->{self::$pageKey});
     }
 }

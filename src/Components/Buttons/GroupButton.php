@@ -5,7 +5,7 @@ namespace Sashalenz\Wiretable\Components\Buttons;
 use Closure;
 use RuntimeException;
 
-class GroupButton extends Button
+final class GroupButton extends Button
 {
     protected array $buttons = [];
     protected ?Closure $routeCallback = null;

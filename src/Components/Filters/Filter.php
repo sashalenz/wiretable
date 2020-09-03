@@ -52,7 +52,11 @@ abstract class Filter extends AllowedFilter
         return $this;
     }
 
-    protected function getValue(?string $value = null)
+    /**
+     * @param string|null $value
+     * @return string|null
+     */
+    public function getValue(?string $value = null): ?string
     {
         $newValue = method_exists($this, 'castValue') ? $this->castValue($value) : $value;
         return ($newValue !== $this->getDefault()) ? $newValue : null;

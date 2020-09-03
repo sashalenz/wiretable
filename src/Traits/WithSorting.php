@@ -6,40 +6,57 @@ use Sashalenz\Wiretable\Components\Columns\Column;
 
 trait WithSorting
 {
-    public string $sort = 'id';
-    public string $defaultSort = 'id';
+    protected static string $defaultSort = '-id';
+    protected static string $sortKey = 'sort';
 
-    public function initializeWithSorting(): void
+    protected function initializeWithSorting(): void
     {
-        $this->sort = $this->resolveSort();
-        $this->request()->query->set('sort', $this->sort);
+        $this->updatesQueryString[self::$sortKey] = ['except' => self::$defaultSort];
+
+        $this->setSort($this->resolveSort());
     }
 
-    public function resolveSort()
+    protected function resetSort(): void
     {
-        return request()->query('sort', $this->sort);
+        $this->setSort(self::$defaultSort);
     }
 
-    public function resetSort(): void
+    private function resolveSort()
     {
-        $this->sort = $this->defaultSort;
-        $this->request()->query->set('sort', $this->defaultSort);
+        return request()->query(self::$sortKey, self::$defaultSort);
     }
 
-    public function updatedSort(): void
+    private function setSort($sort): void
     {
-        if (method_exists($this, 'resetPage')) {
-            $this->resetPage();
-        }
-        $this->request()->query->set('sort', $this->sort);
+        $this->{self::$sortKey} = (string) $sort;
+        $this->request()->query->set('sort', (string) $sort);
     }
 
     private function getAllowedSorts(): array
     {
         return $this->columns()
-            ->filter(fn(Column $column) => $column->isSortable())
-            ->map(fn(Column $column) => $column->getName())
-            ->values()
-            ->toArray() ?? [];
+                ->filter(fn(Column $column) => $column->isSortable())
+                ->map(fn(Column $column) => $column->getName())
+                ->values()
+                ->toArray() ?? [];
+    }
+
+    public function sortBy($columnName): void
+    {
+        // determinate sort by clicked column
+        $sort = ($this->{self::$sortKey} !== $columnName) ? $columnName : sprintf('-%s', $columnName);
+
+        // call private function that setting sort
+        $this->setSort($sort);
+
+        // reset page if is not first
+        if (method_exists($this, 'resetPage')) {
+            $this->resetPage();
+        }
+    }
+
+    public function getSortProperty(): string
+    {
+        return $this->{self::$sortKey};
     }
 }

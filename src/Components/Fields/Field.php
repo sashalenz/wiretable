@@ -13,13 +13,14 @@ abstract class Field extends Component
 {
     public string $name;
     public ?string $title = null;
-    public ?string $icon = null;
     public bool $required = false;
     public ?string $placeholder = null;
     public ?string $help = null;
-    public string $type = 'text';
     public int $size = 6;
+    public $default = null;
     public $value = null;
+    public bool $requiredIcon = true;
+    public ?string $cast = null;
 
     protected array $rules = [];
     protected Collection $classes;
@@ -30,6 +31,7 @@ abstract class Field extends Component
         'renderIt',
         'make',
         'setValue',
+        'setDefault',
         'setIcon',
         'setRules',
         'setType',
@@ -39,61 +41,32 @@ abstract class Field extends Component
         'setHelp',
         'addClass',
         'getRules',
-        'setOptions'
+        'setOptions',
+        'setCast',
+        'getCast',
+        'hasCast'
     ];
 
     public function __construct(
         string $name,
         ?string $title = null,
         $value = null,
-        ?string $icon = null,
-        bool $required = false,
+        ?bool $required = false,
         ?string $placeholder = null,
+        $default = null,
         ?string $help = null,
-        string $type = 'text',
-        int $size = 6
+        ?int $size = 6
     ) {
         $this->name = $name;
         $this->title = $title;
-        $this->value = $value;
-        $this->icon = $icon;
-        $this->required = $required;
+        $this->value = $this->castValue($value);
+        $this->required = (bool) $required;
         $this->placeholder = $placeholder;
+        $this->default = $this->castValue($default);
         $this->help = $help;
-        $this->type = $type;
         $this->size = $size;
 
         $this->classes = collect();
-    }
-
-    /**
-     * @param string $icon
-     * @return $this
-     */
-    public function setIcon(string $icon): self
-    {
-        $this->icon = $icon;
-        return $this;
-    }
-
-    /**
-     * @param $value
-     * @return $this
-     */
-    public function setValue($value): self
-    {
-        $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * @param string $type
-     * @return $this
-     */
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-        return $this;
     }
 
     /**
@@ -110,9 +83,29 @@ abstract class Field extends Component
      * @param string|null $placeholder
      * @return $this
      */
-    public function setPlaceholder(string $placeholder): self
+    public function setPlaceholder(?string $placeholder = null): self
     {
         $this->placeholder = $placeholder;
+        return $this;
+    }
+
+    /**
+     * @param $value
+     * @return $this
+     */
+    public function setValue($value): self
+    {
+        $this->value = $this->castValue($value);
+        return $this;
+    }
+
+    /**
+     * @param string $default
+     * @return $this
+     */
+    public function setDefault(string $default): self
+    {
+        $this->default = $this->castValue($default);
         return $this;
     }
 
@@ -142,6 +135,15 @@ abstract class Field extends Component
     public function isRequired(): self
     {
         $this->required = true;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function hideRequiredIcon(): self
+    {
+        $this->requiredIcon = false;
         return $this;
     }
 
@@ -183,11 +185,28 @@ abstract class Field extends Component
         return $this->rules;
     }
 
+    public function setCast(string $cast): self
+    {
+        $this->cast = $cast;
+
+        return $this;
+    }
+
+    public function getCast(): string
+    {
+        return $this->cast;
+    }
+
+    public function hasCast(): bool
+    {
+        return !is_null($this->cast);
+    }
+
     /**
      * @param callable $styleCallback
      * @return $this
      */
-    protected function styleUsing(callable $styleCallback): self
+    public function styleUsing(callable $styleCallback): self
     {
         $this->styleCallback = $styleCallback;
         return $this;
@@ -197,7 +216,7 @@ abstract class Field extends Component
      * @param callable $displayCondition
      * @return $this
      */
-    protected function displayIf(callable $displayCondition): self
+    public function displayIf(callable $displayCondition): self
     {
         $this->displayCondition = $displayCondition;
         return $this;
@@ -209,6 +228,11 @@ abstract class Field extends Component
             ->filter( fn ($value, $key) => !in_array($key, ['getDataArray', 'attributes']))
             ->mapWithKeys( fn ($value, $key) => [$key => is_null($value) ? '' : $value])
             ->toArray();
+    }
+
+    public function castValue($value)
+    {
+        return $value;
     }
 
     /**
@@ -233,16 +257,6 @@ abstract class Field extends Component
             return null;
         }
 
-        info(session()->get('errors'));
-
-        return $this
-//            ->withAttributes([
-//                'class' => ($model) ? $this->getClass($model) : null
-//            ])
-            ->render()
-            ->with($this->data())
-            ->with([
-                'hasError' => false
-            ]);
+        return $this->render()->with($this->data());
     }
 }

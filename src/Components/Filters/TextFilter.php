@@ -17,7 +17,7 @@ class TextFilter extends Filter
             ->setPlaceholder($this->placeholder)
             ->setValue($this->value)
             ->withAttributes([
-                "x-init" => "\$watch('value', value => @this.call('addFilter', name, value))"
+                "wire:change" => "addFilter"
             ])
             ->renderIt();
     }

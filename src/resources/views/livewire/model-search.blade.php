@@ -1,32 +1,67 @@
-<div class="w-full relative" x-data="{ open: {{ $isOpen ? 1 : 0 }} }" x-on:click.away="(open) ? @this.set('isOpen', false) : null">
-    <div class="cursor-pointer form-input" x-on:click.prevent="(!open) ? @this.set('isOpen', true) : null">
-        <div class="relative" role="textbox">
+<div class="relative" x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }">
+    <span class="inline-block w-full rounded-md shadow-sm" x-on:click.prevent="@this.set('isOpen', !open)">
+        <button type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label" class="cursor-default relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5">
             @if($this->selected)
-                @unless($required)
-                    <span class="absolute right-0 top-0 z-20" title="@lang('wiretable::remove_all_items')" wire:click="setSelected(null)">×</span>
-                @endif
-                {{ $this->selected->getDisplayName() }}
+                <span class="block truncate">{{ $this->selected->getDisplayName() }}</span>
             @else
-                {{ $label ?? __('wiretable::form.please_select') }}
+                <span class="block truncate text-gray-500">{{ ($placeholder ?? __('wiretable::form.please_select')) }}</span>
             @endif
-        </div>
-    </div>
+            @if($required)
+                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                        <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+            @elseif($this->selected)
+                <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer" wire:click.prevent="setSelected(null)">
+                    <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </span>
+            @endif
+        </button>
+    </span>
     @if($isOpen)
-        <div class="absolute top-auto inset-x-0 border bg-gray-200 w-full z-10">
-            <div class="p-2 relative">
-                <input type="search" wire:model.debounce.500ms="search" class="form-input p-1 w-full">
-                <div class="absolute top-0 right-0 p-2" wire:loading wire:target="search">
-                    <i class="far fa-spinner"></i>
+        <div class="absolute mt-1 w-full rounded-md bg-white shadow-lg z-20"
+             x-show="open"
+             @click.away="@this.set('isOpen', false)"
+             x-description="Select popover, show/hide based on select state."
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+        >
+            <ul tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-item-3" class="max-h-60 rounded-md py-1 text-base leading-6 shadow-xs overflow-auto focus:outline-none sm:text-sm sm:leading-5">
+                <div class="relative p-2">
+                    <input id="search" class="form-input block w-full sm:text-sm sm:leading-5" wire:model="search" placeholder="@lang('wiretable::form.search')">
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <svg wire:loading="search" class="h-4 w-4 text-gray-400 animate" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            <ul class="list-none max-h-64 overflow-y-scroll" style="max-height: 200px;" role="listbox" aria-expanded="true" aria-hidden="false">
-                @if($this->results->count())
-                    @foreach($this->results as $item)
-                        <li class="border-b hover:bg-gray-500 p-2 cursor-pointer" role="option" @if($item->{$item->getKeyName()} === $value) aria-selected="true" @endif wire:click="setSelected({{ $item->{$item->getKeyName()} }})">{{ $item->getDisplayName() }}</li>
-                    @endforeach
-                @else
-                    <li class="text-gray-700 p-2">@lang('wiretable::form.results_not_found')</li>
-                @endif
+                @forelse($this->results as $item)
+                    <li id="listbox-option-{{ $loop->index }}" role="option" class="group text-gray-900 focus:text-white focus:bg-indigo-600 hover:text-white hover:bg-indigo-600 cursor-default select-none relative py-2 pl-3 pr-9">
+                        <span
+                                class="block truncate {{ $this->selected && $item->{$item->getKeyName()} === $this->selected->{$item->getKeyName()} ? 'font-semibold' : 'font-normal' }}"
+                                x-on:click.prevent="@this.call('setSelected', '{{ $item->{$item->getKeyName()} }}')"
+                        >
+                            {{ $item->getDisplayName() }}
+                        </span>
+                        @if($this->selected && $item->{$item->getKeyName()} === $this->selected->{$item->getKeyName()})
+                            <span class="text-indigo-600 group-focus:text-white group-hover:text-white absolute inset-y-0 right-0 flex items-center pr-4">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        @endif
+                    </li>
+                @empty
+                    <li id="listbox-option-null" role="option" class="group text-gray-500 cursor-default select-none relative py-2 pl-3 pr-9">
+                        <span class="font-normal block truncate">
+                            @lang('wiretable::form.results_not_found')
+                        </span>
+                    </li>
+                @endforelse
             </ul>
         </div>
     @endif

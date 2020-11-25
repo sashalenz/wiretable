@@ -9,7 +9,7 @@ trait WithSearching
 
     protected function initializeWithSearching(): void
     {
-        $this->updatesQueryString[self::$searchKey] = ['except' => ''];
+        $this->queryString[self::$searchKey] = ['except' => ''];
 
         $this->setSearch($this->resolveSearch());
     }

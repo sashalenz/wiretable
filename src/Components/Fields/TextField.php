@@ -7,7 +7,7 @@ use Illuminate\View\View;
 class TextField extends Field
 {
     public ?string $icon = null;
-    public string $type = 'text';
+    public ?string $type = 'text';
 
     public function __construct(string $name, ?string $title = null, $value = null, ?bool $required = false, ?string $placeholder = null, ?string $default = null, ?string $help = null, ?int $size = 6, ?string $type = 'text', ?string $icon = null)
     {

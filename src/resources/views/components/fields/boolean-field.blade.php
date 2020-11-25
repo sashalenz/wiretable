@@ -5,47 +5,40 @@
         class="col-span-6 md:col-span-{{ $size }} {{ $class ?? '' }}"
         @endif
 >
-    <div class="flex items-center my-2">
-        <label for="{{ $name }}"
-               class="flex items-center cursor-pointer"
-               @if(isset($this->{$name}))
-               x-data="{ on: {{ $this->{$name} ? 'true' : 'false' }} }"
-               @else
-               x-data="{ on: {{ $value ? 'true' : 'false' }} }"
-               @endif
-               :aria-checked="on.toString()"
-               @focus="focused = true"
-               @blur="focused = false"
-        >
-            <div class="group relative inline-flex items-center justify-center flex-shrink-0 h-5 w-10 cursor-pointer focus:outline-none">
-                <input id="{{ $name }}"
-                       name="{{ $name }}"
-                       class="hidden"
-                       type="checkbox"
-                       @if(isset($attributes) && $attributes->whereStartsWith('wire:model')->first())
-                       wire:model="{{ $attributes->whereStartsWith('wire:model')->first() }}"
-                       @elseif(isset($attributes) && $attributes->whereStartsWith('wire:change')->first())
-                       wire:change="{{ $attributes->whereStartsWith('wire:change')->first() }}('{{ $name }}', $event.target.checked)"
-                       @else
-                       wire:model="{{ $name }}"
-                       @endif
-                       @change="on = $event.target.checked"
+    {{--    @if(isset($attributes) && $attributes->whereStartsWith('wire:model')->first())--}}
+    {{--        wire:model="{{ $attributes->whereStartsWith('wire:model')->first() }}"--}}
+    {{--    @elseif(isset($attributes) && $attributes->whereStartsWith('wire:change')->first())--}}
+    {{--        wire:change="{{ $attributes->whereStartsWith('wire:change')->first() }}('{{ $name }}', $event.target.checked)"--}}
+    {{--    @else--}}
+    {{--        wire:model="{{ $wireModel ?? $name }}"--}}
+    {{--    @endif--}}
+
+    <div x-data="{ delayed : 0 }" x-init="requestAnimationFrame(() => delayed = 1)">
+        <template x-if="delayed">
+            <div class="flex items-center">
+                <button type="button"
+                        @click="on = !on"
+                        :aria-pressed="on !== null ? on.toString() : 'false'"
+                        aria-pressed="false"
+                        aria-labelledby="toggleLabel"
+                        x-data="{ on: @entangle($wireModel ?? $model) }"
+                        :class="{ 'bg-gray-200': !on, 'bg-primary-600': on }"
+                        class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 bg-gray-200"
                 >
-                <div class="absolute h-4 w-9 mx-auto rounded-full transition-colors ease-in-out duration-200 bg-gray-200"
-                     :class="{ 'bg-indigo-600': on, 'bg-gray-200': !on }"
-                ></div>
-                <div class="absolute left-0 inline-block h-5 w-5 border border-gray-200 rounded-full bg-white shadow transform group-focus:shadow-outline group-focus:border-blue-300 transition-transform ease-in-out duration-200 translate-x-0"
-                     :class="{ 'translate-x-5': on, 'translate-x-0': !on }"></div>
+                    <span class="sr-only">{{ $title }}</span>
+                    <span aria-hidden="true"
+                          :class="{ 'translate-x-5': on, 'translate-x-0': !on }"
+                          class="inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 translate-x-0"
+                    ></span>
+                </button>
+                <span class="ml-3" id="toggleLabel">
+                    <span class="text-sm font-medium text-gray-900">{{ $title }}</span>
+                    @isset($help)<span class="font-light text-sm text-gray-500">{{ $help }}</span>@endisset
+                </span>
             </div>
-            <div class="ml-3 block text-sm leading-5 font-medium text-gray-700">
-                {{ $title }}
-                @isset($help)
-                    <div class="font-light text-xs text-gray-400">{{ $help }}</div>
-                @endisset
-            </div>
-        </label>
+            @error($name)
+            <div class="mt-2 text-sm text-red-500">{{ $message }}</div>
+            @enderror
+        </template>
     </div>
-    @error($name)
-    <div class="mt-2 text-sm text-red-500">{{ $message }}</div>
-    @enderror
 </div>

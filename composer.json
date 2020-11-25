@@ -20,11 +20,11 @@
   ],
   "require": {
     "php": "^7.4",
-    "illuminate/config": "^7.18",
-    "illuminate/database": "^7.18",
-    "illuminate/support": "^7.18",
-    "livewire/livewire": "^1.2",
-    "spatie/laravel-query-builder": "^2.8"
+    "illuminate/config": "^7.18|^8.5",
+    "illuminate/database": "^7.18|^8.5",
+    "illuminate/support": "^7.18|^8.5",
+    "livewire/livewire": "^2.3",
+    "spatie/laravel-query-builder": "^3.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master"

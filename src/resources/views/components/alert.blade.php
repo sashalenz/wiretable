@@ -11,7 +11,7 @@
      x-transition:leave-end="opacity-0"
      class="fixed top-0 right-0 m-4 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto z-40"
 >
-    <div class="rounded-lg shadow-xs overflow-hidden">
+    <div class="rounded-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div class="p-4">
             <div class="flex items-start">
                 <div class="flex-shrink-0">

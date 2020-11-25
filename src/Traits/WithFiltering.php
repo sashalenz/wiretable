@@ -13,7 +13,7 @@ trait WithFiltering
 
     public function initializeWithFiltering(): void
     {
-        $this->updatesQueryString[self::$filterKey] = ['except' => ''];
+        $this->queryString[self::$filterKey] = ['except' => ''];
 
         $queryFilters = $this->resolveFilter();
         $this->filters = ($queryFilters) ? $this->expandFilters($queryFilters) : collect();

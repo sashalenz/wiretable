@@ -11,7 +11,7 @@ trait WithSorting
 
     protected function initializeWithSorting(): void
     {
-        $this->updatesQueryString[self::$sortKey] = ['except' => $this->defaultSort];
+        $this->queryString[self::$sortKey] = ['except' => $this->defaultSort];
 
         $this->setSort($this->resolveSort());
     }

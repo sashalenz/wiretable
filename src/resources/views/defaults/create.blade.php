@@ -5,9 +5,7 @@
 </form>
 
 @push('buttons')
-    <span class="ml-3 inline-flex rounded-md shadow-sm">
-        <button type="submit" form="form" class="inline-flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-            @lang('buttons.create')
-        </button>
-    </span>
+    <button type="submit" form="form" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm">
+        @lang('buttons.create')
+    </button>
 @endpush

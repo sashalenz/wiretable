@@ -26,8 +26,8 @@ abstract class Wiretable extends Component
         WithActions;
 
     protected string $model;
-
     protected $request;
+    protected string $layout = 'layouts.app';
 
     protected $listeners = [
         'refresh',
@@ -86,66 +86,67 @@ abstract class Wiretable extends Component
 
     public function getDataProperty()
     {
-        return QueryBuilder::for($this->query(), $this->request())
-            ->when(
-                method_exists($this, 'initializeWithFiltering'),
-                fn (QueryBuilder $query) => $query
-                    ->allowedFilters($this->getFiltersProperty()->toArray())
-            )
-            ->when(
-                method_exists($this, 'initializeWithSorting'),
-                fn (QueryBuilder $query) => $query
-                    ->defaultSort($this->defaultSort)
-                    ->allowedSorts(...$this->getAllowedSorts())
-            )
+        $builder = QueryBuilder::for($this->query(), $this->request());
+
+        if (method_exists($this, 'initializeWithFiltering')) {
+            $builder = $builder->allowedFilters($this->getFiltersProperty()->toArray());
+        }
+
+        if (method_exists($this, 'initializeWithSorting')) {
+            $builder = $builder->defaultSort($this->defaultSort)->allowedSorts(...$this->getAllowedSorts());
+        }
+
+        return $builder
             ->when(
                 method_exists($this, 'initializeWithSearching') && !$this->disableSearch && $this->getSearchProperty(),
                 new SearchFilter($this->getSearchProperty())
             )
             ->when(
                 $this->simplePagination === true,
-                fn (QueryBuilder $query) => $query->simplePaginate($this->perPage),
-                fn (QueryBuilder $query) => $query->paginate($this->perPage)->onEachSide(1)
+                fn (Builder $query) => $query->simplePaginate($this->perPage),
+                fn (Builder $query) => $query->paginate($this->perPage)->onEachSide(1)
             );
     }
-
-    public function getPublicPropertiesDefinedBySubClass(): array
-    {
-        return collect(parent::getPublicPropertiesDefinedBySubClass())
-            ->when(
-                method_exists($this, 'initializeWithSorting'),
-                fn (Collection $collection) => $collection->put(
-                    self::$sortKey,
-                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : $this->defaultSort
-                )
-            )
-            ->when(
-                method_exists($this, 'initializeWithPagination'),
-                fn (Collection $collection) => $collection->put(
-                    self::$pageKey,
-                    property_exists($this, self::$pageKey) ? $this->{self::$pageKey} : 1
-                )
-            )
-            ->when(
-                method_exists($this, 'initializeWithSearching'),
-                fn (Collection $collection) => $collection->put(
-                    self::$searchKey,
-                    property_exists($this, self::$searchKey) ? $this->{self::$searchKey} : ''
-                )
-            )
-            ->when(
-                method_exists($this, 'initializeWithFiltering'),
-                fn (Collection $collection) => $collection->put(
-                    self::$filterKey,
-                    property_exists($this, self::$filterKey) ? $this->{self::$filterKey} : ''
-                )
-            )
-            ->toArray();
-    }
+//
+//    public function getPublicPropertiesDefinedBySubClass(): array
+//    {
+//        $properties = collect()
+//            ->when(
+//                method_exists($this, 'initializeWithSorting'),
+//                fn (Collection $collection) => $collection->put(
+//                    self::$sortKey,
+//                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : $this->defaultSort
+//                )
+//            )
+//            ->when(
+//                method_exists($this, 'initializeWithPagination'),
+//                fn (Collection $collection) => $collection->put(
+//                    self::$pageKey,
+//                    property_exists($this, self::$pageKey) ? $this->{self::$pageKey} : 1
+//                )
+//            )
+//            ->when(
+//                method_exists($this, 'initializeWithSearching'),
+//                fn (Collection $collection) => $collection->put(
+//                    self::$searchKey,
+//                    property_exists($this, self::$searchKey) ? $this->{self::$searchKey} : ''
+//                )
+//            )
+//            ->when(
+//                method_exists($this, 'initializeWithFiltering'),
+//                fn (Collection $collection) => $collection->put(
+//                    self::$filterKey,
+//                    property_exists($this, self::$filterKey) ? $this->{self::$filterKey} : ''
+//                )
+//            )
+//            ->toArray();
+//
+//        return array_merge(parent::getPublicPropertiesDefinedBySubClass(), $properties);
+//    }
 
     public function render()
     {
-        return view('wiretable::defaults.index');
+        return view('wiretable::defaults.index')->extends($this->layout);
     }
 
     abstract public function getTitleProperty(): string;

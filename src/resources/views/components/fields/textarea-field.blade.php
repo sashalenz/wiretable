@@ -1,4 +1,5 @@
 <x-wiretable-layout-field :name="$name"
+                          :wire-model="$wireModel"
                           :title="$title"
                           :size="$size"
                           :help="$help"
@@ -11,7 +12,7 @@
                       name="{{ $name }}"
                       placeholder="{{ $placeholder }}"
                       aria-describedby="{{ $name }}"
-                      class="form-textarea block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5  @if($errors->has($name)) border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red @endif"
+                      class="max-w-lg shadow-sm block w-full focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md @if($errors->has($name)) border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 @endif"
                       @if($required)required="required" @endif
                       @keyup="$dispatch('type', $event.target.value.length)"
                       @if(isset($attributes) && $attributes->whereStartsWith('wire:model')->first())
@@ -19,7 +20,7 @@
                       @elseif(isset($attributes) && $attributes->whereStartsWith('wire:change')->first())
                       wire:change="{{ $attributes->whereStartsWith('wire:change')->first() }}('{{ $name }}', $event.target.value)"
                       @else
-                      wire:model="{{ $name }}"
+                      wire:model="{{ $wireModel ?? $name }}"
                       @endif
             ></textarea>
     </div>

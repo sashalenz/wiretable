@@ -12,7 +12,7 @@ trait WithPagination
 
     protected function initializeWithPagination(): void
     {
-        $this->updatesQueryString[self::$pageKey] = ['except' => 1];
+        $this->queryString[self::$pageKey] = ['except' => 1];
 
         $this->setPage($this->resolvePage());
 

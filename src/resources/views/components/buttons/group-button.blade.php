@@ -20,7 +20,7 @@
          x-transition:leave-end="transform opacity-0 scale-95"
          class="mx-3 origin-top-right absolute z-20 right-7 top-0 w-48 mt-1 rounded-md shadow-lg"
     >
-        <div class="rounded-md bg-white shadow-xs space-y-2" role="menu" aria-orientation="vertical" aria-labelledby="project-options-menu-10">
+        <div class="rounded-md bg-white ring-1 ring-black ring-opacity-5 space-y-2" role="menu" aria-orientation="vertical" aria-labelledby="project-options-menu-10">
             @foreach($buttons as $button)
                 <div class="hover:bg-gray-100 focus:bg-gray-100">
                     {!! $button->renderIt($row) !!}

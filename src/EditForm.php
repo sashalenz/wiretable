@@ -3,33 +3,33 @@
 namespace Sashalenz\Wiretable;
 
 use Illuminate\Database\Eloquent\Model;
+use Sashalenz\Wiretable\Components\Fields\Field;
 
 abstract class EditForm extends Wireform
 {
-    public $model;
-
-    public function getModelClassProperty():? Model
+    public function getModelClassProperty(): Model
     {
         return $this->model;
     }
 
     public function render()
     {
-        return view('wiretable::defaults.edit');
+        return view('wiretable::defaults.edit')
+            ->extends($this->layout);
     }
 
     public function save(): void
     {
         try {
-            $this->model->fill($this->validated());
+            $this->validate();
 
-            if ($this->model->isClean()) {
+            if ($this->getModelClassProperty()->isClean()) {
                 $this->dispatchBrowserEvent('alert', [
                     'status' => 'info',
                     'message' => 'Nothing to update!'
                 ]);
             } else {
-                $this->model->save();
+                $this->getModelClassProperty()->save();
                 $this->dispatchBrowserEvent('alert', [
                     'status' => 'success',
                     'message' => 'Successfully updated!'
@@ -45,5 +45,4 @@ abstract class EditForm extends Wireform
             ]);
         }
     }
-
 }

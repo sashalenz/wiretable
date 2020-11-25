@@ -16,9 +16,10 @@ abstract class Field extends Component
     public bool $required = false;
     public ?string $placeholder = null;
     public ?string $help = null;
-    public int $size = 6;
+    public ?int $size = 6;
     public $default = null;
     public $value = null;
+    public ?string $wireModel = null;
     public bool $requiredIcon = true;
     public ?string $cast = null;
 
@@ -177,12 +178,9 @@ abstract class Field extends Component
             ->implode(' ');
     }
 
-    /**
-     * @return array
-     */
     public function getRules(): array
     {
-        return $this->rules;
+        return [$this->name => $this->rules];
     }
 
     public function setCast(string $cast): self
@@ -247,9 +245,9 @@ abstract class Field extends Component
 
     /**
      * @param Model|null $model
-     * @return View|null
+     * @return Closure|\Illuminate\Contracts\Support\Htmlable|\Illuminate\Contracts\View\View|View|string|null
      */
-    public function renderIt(?Model $model = null):? View
+    public function renderIt(?Model $model = null)
     {
         $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $model) : true;
 

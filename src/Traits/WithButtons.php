@@ -57,13 +57,6 @@ trait WithButtons
                     RestoreButton::make('restore')
                         ->displayIf(fn ($row) => !is_null($row->deleted_at))
                 );
-        } else {
-            $this->actionButtons
-                ->push(
-//                    FIX
-                    DeleteButton::make('delete')
-                        ->displayIf(fn ($row) => optional(auth('admin')->user())->can('delete '.$model::RESOURCE))
-                );
         }
 
         if (method_exists($model, 'getRoute') && $model->hasRoute($this->createView)) {

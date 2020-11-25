@@ -6,24 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class CreateForm extends Wireform
 {
-    public string $model;
-
-    public function getModelClassProperty():? Model
+    public function mount(): void
     {
-        return app($this->model);
+        $this->model = new $this->initialize($this->defaults());
+    }
+
+    public function getModelClassProperty(): Model
+    {
+        return $this->model;
     }
 
     public function render()
     {
-        return view('wiretable::defaults.create');
+        return view('wiretable::defaults.create')
+            ->extends($this->layout);
     }
 
     public function save(): void
     {
         try {
-            $this->model::create($this->validated());
+            $this->validate();
+            $this->model->save();
 
-            $this->reset();
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'success',
                 'message' => 'Successfully created!'

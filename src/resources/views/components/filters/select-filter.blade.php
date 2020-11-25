@@ -1,7 +1,7 @@
 <div class="flex px-2">
-    <select id="{{ $name }}" class="form-input w-full" name="{{ $name }}" wire:change="addFilter('{{ $name }}', $event.target.value)" @if($required) required @endif>
+    <select id="{{ $name }}" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" name="{{ $name }}" wire:change="addFilter('{{ $name }}', $event.target.value)" @if($required) required @endif>
         @if(!$required)
-            <option value="" class="text-gray-700" @if(is_null($value)) selected @endif>{{ $label }}</option>
+            <option value="" @if(is_null($value)) selected @endif>{{ $label }}</option>
         @endif
         @foreach($options as $key => $option)
             <option value="{{ $key }}" @if((int)$value === (int)$key) selected @endif>{{ $option }}</option>

@@ -2,11 +2,8 @@
 
 namespace Sashalenz\Wiretable;
 
-use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use ReflectionException;
 use Sashalenz\Wiretable\Components\Alert;
 use Sashalenz\Wiretable\Components\Fields\LayoutField;
 use Sashalenz\Wiretable\Components\Fields\SelectField;
@@ -15,13 +12,11 @@ use Sashalenz\Wiretable\Components\Form;
 use Sashalenz\Wiretable\Components\Modal;
 use Sashalenz\Wiretable\Components\Table;
 use Sashalenz\Wiretable\Livewire\ModelSearch;
-use Sashalenz\Wiretable\Macros\RouteMacros;
-use Sashalenz\Wiretable\Macros\RouterMacros;
 
 class WiretableServiceProvider extends ServiceProvider
 {
     /**
-     * @throws ReflectionException
+     *
      */
     public function boot(): void
     {
@@ -53,8 +48,6 @@ class WiretableServiceProvider extends ServiceProvider
         ]);
 
         Livewire::component('model-search', ModelSearch::class);
-
-        Router::mixin(new RouterMacros);
     }
 
     public function register(): void

@@ -1,4 +1,4 @@
-<div class="whitespace-no-wrap" x-data="{ value: false, id: '{{ $id }}' }" x-init="$watch('value', value => $dispatch('toggle-check', {id: id, value: value}) )">
+<div class="whitespace-nowrap" x-data="{ value: false, id: '{{ $id }}' }" x-init="$watch('value', value => $dispatch('toggle-check', {id: id, value: value}) )">
     <label class="inline-flex items-center">
         <input
                 type="checkbox"

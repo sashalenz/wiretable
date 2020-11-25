@@ -1,4 +1,4 @@
-<span wire:click="sortBy('{{ $name }}')" class="cursor-pointer flex justify-between whitespace-no-wrap">
+<span wire:click="sortBy('{{ $name }}')" class="cursor-pointer flex justify-between whitespace-nowrap">
     {!! $title !!}
     @unless($isCurrentSort)
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 ml-2 text-gray-300">

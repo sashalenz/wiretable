@@ -14,13 +14,13 @@
         @endif
     </div>
     {{ $slot }}
+    @isset($wireModel)
     @error($wireModel)
-    {{ $wireModel }}
-        <div class="mt-2 text-sm text-red-600">{{ $message }}</div>
+        <div class="mt-2 text-sm text-red-500">{{ $message }}</div>
     @enderror
+    @endisset
     @error($name)
-    {{ $name }}
-        <div class="mt-2 text-sm text-red-600">{{ $message }}</div>
+        <div class="mt-2 text-sm text-red-500">{{ $message }}</div>
     @enderror
     @isset($help)
         <div class="mt-2 text-sm text-gray-500">{{ $help }}</div>

@@ -3,7 +3,6 @@
 namespace Sashalenz\Wiretable;
 
 use Illuminate\Database\Eloquent\Model;
-use Sashalenz\Wiretable\Components\Fields\Field;
 
 abstract class EditForm extends Wireform
 {
@@ -21,7 +20,7 @@ abstract class EditForm extends Wireform
     public function save(): void
     {
         try {
-            $this->validate();
+            $this->validate($this->rules());
 
             if ($this->getModelClassProperty()->isClean()) {
                 $this->dispatchBrowserEvent('alert', [

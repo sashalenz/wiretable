@@ -51,8 +51,6 @@ abstract class Wireform extends Component
             return;
         }
 
-        info($rules);
-
         $this->validateOnly(
             $field,
             $rules
@@ -75,10 +73,7 @@ abstract class Wireform extends Component
             ->toArray();
     }
 
-    protected function fields(): Collection
-    {
-        return collect();
-    }
+    abstract protected function fields(): Collection|Fields;
 
     abstract public function getTitleProperty(): string;
 }

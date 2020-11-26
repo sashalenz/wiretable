@@ -24,9 +24,11 @@
                wire:model="{{ $attributes->whereStartsWith('wire:model')->first() }}"
                @elseif(isset($attributes) && $attributes->whereStartsWith('wire:change')->first())
                wire:change="{{ $attributes->whereStartsWith('wire:change')->first() }}('{{ $name }}', $event.target.value)"
+               @elseif($wireModel)
+               wire:model="{{ $wireModel }}"
                @else
-               wire:model="{{ $wireModel ?? $name }}"
-                @endif
+               value="{{ old($name) }}"
+               @endif
         >
         @error($wireModel ?? $name)
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

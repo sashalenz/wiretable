@@ -25,7 +25,7 @@ abstract class CreateForm extends Wireform
     public function save(): void
     {
         try {
-            $this->validate();
+            $this->validate($this->rules());
             $this->model->save();
 
             $this->dispatchBrowserEvent('alert', [

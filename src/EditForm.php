@@ -20,9 +20,15 @@ abstract class EditForm extends Wireform
     public function save(): void
     {
         try {
-            $this->validate($this->rules());
+            $this->validate();
 
-            if ($this->getModelClassProperty()->isClean()) {
+            foreach ($this->media as $collection => $file) {
+                $this->model
+                    ->addMediaFromDisk($file)
+                    ->toMediaCollection($collection);
+            }
+
+            if (empty($this->media) && $this->getModelClassProperty()->isClean()) {
                 $this->dispatchBrowserEvent('alert', [
                     'status' => 'info',
                     'message' => 'Nothing to update!'
@@ -39,7 +45,7 @@ abstract class EditForm extends Wireform
         } catch (\RuntimeException $exception) {
             $this->dispatchBrowserEvent('alert', [
                 'status' => 'error',
-                'message' => 'Unable to create!',
+                'message' => 'Unable to update!',
                 'description' => $exception->getMessage()
             ]);
         }

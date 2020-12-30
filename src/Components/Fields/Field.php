@@ -21,7 +21,6 @@ abstract class Field extends Component
     public $value = null;
     public ?string $wireModel = null;
     public bool $requiredIcon = true;
-    public ?string $cast = null;
 
     protected array $rules = [];
     protected Collection $classes;
@@ -70,98 +69,60 @@ abstract class Field extends Component
         $this->classes = collect();
     }
 
-    /**
-     * @param int $size
-     * @return $this
-     */
     public function setSize(int $size): self
     {
         $this->size = $size;
         return $this;
     }
 
-    /**
-     * @param string|null $placeholder
-     * @return $this
-     */
     public function setPlaceholder(?string $placeholder = null): self
     {
         $this->placeholder = $placeholder;
         return $this;
     }
 
-    /**
-     * @param $value
-     * @return $this
-     */
     public function setValue($value): self
     {
         $this->value = $this->castValue($value);
         return $this;
     }
 
-    /**
-     * @param string $default
-     * @return $this
-     */
     public function setDefault(string $default): self
     {
         $this->default = $this->castValue($default);
         return $this;
     }
 
-    /**
-     * @param string $help
-     * @return $this
-     */
     public function setHelp(string $help): self
     {
         $this->help = $help;
         return $this;
     }
 
-    /**
-     * @param array $rules
-     * @return $this
-     */
     public function setRules(array $rules): self
     {
         $this->rules = $rules;
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     public function isRequired(): self
     {
         $this->required = true;
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     public function hideRequiredIcon(): self
     {
         $this->requiredIcon = false;
         return $this;
     }
 
-    /**
-     * @param mixed ...$classes
-     * @return $this
-     */
     public function addClass(...$classes): self
     {
         $this->classes->push($classes);
         return $this;
     }
 
-    /**
-     * @param Model $model
-     * @return string|null
-     */
     private function getClass(Model $model): ?string
     {
         $class = is_callable($this->styleCallback) ? call_user_func($this->styleCallback, $model) : null;
@@ -178,42 +139,22 @@ abstract class Field extends Component
             ->implode(' ');
     }
 
+    public function hasRules(): bool
+    {
+        return count($this->rules);
+    }
+
     public function getRules(): array
     {
-        return [$this->name => $this->rules];
+        return $this->rules;
     }
 
-    public function setCast(string $cast): self
-    {
-        $this->cast = $cast;
-
-        return $this;
-    }
-
-    public function getCast(): string
-    {
-        return $this->cast;
-    }
-
-    public function hasCast(): bool
-    {
-        return !is_null($this->cast);
-    }
-
-    /**
-     * @param callable $styleCallback
-     * @return $this
-     */
     public function styleUsing(callable $styleCallback): self
     {
         $this->styleCallback = $styleCallback;
         return $this;
     }
 
-    /**
-     * @param callable $displayCondition
-     * @return $this
-     */
     public function displayIf(callable $displayCondition): self
     {
         $this->displayCondition = $displayCondition;
@@ -233,21 +174,12 @@ abstract class Field extends Component
         return $value;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $title
-     * @return static
-     */
-    public static function make(string $name, ?string $title = null)
+    public static function make(string $name, ?string $title = null): static
     {
         return new static($name, $title);
     }
 
-    /**
-     * @param Model|null $model
-     * @return Closure|\Illuminate\Contracts\Support\Htmlable|\Illuminate\Contracts\View\View|View|string|null
-     */
-    public function renderIt(?Model $model = null)
+    public function renderIt(?Model $model = null): Closure|\Illuminate\Contracts\Support\Htmlable|\Illuminate\Contracts\View\View|View|string|null
     {
         $condition = is_callable($this->displayCondition) ? call_user_func($this->displayCondition, $model) : true;
 

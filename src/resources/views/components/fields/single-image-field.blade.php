@@ -6,5 +6,5 @@
                           :required-icon="$requiredIcon"
                           class="{{ $attributes->whereStartsWith('class')->first() }}"
 >
-    <livewire:model-search :name="$name" :model="$model" :required="$required" :placeholder="$placeholder" :readonly="$readonly" :value="$value ?? optional($model)->{$name}" :key="'custom-select-field-'.$name" />
+    <livewire:single-image :name="$name" :value="$value" :key="'single-image-field-'.$name" />
 </x-wiretable-layout-field>

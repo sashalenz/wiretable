@@ -14,15 +14,17 @@ class ModelSearch extends Component
     public ?string $placeholder = null;
     public ?string $value = null;
     public bool $isOpen = false;
+    public bool $readonly = false;
     public int $limit = 20;
 
-    public function mount(string $name, string $model, string $placeholder = null, string $value = null, bool $required = false): void
+    public function mount(string $name, string $model, string $placeholder = null, string $value = null, bool $required = false, bool $readonly = true): void
     {
         $this->name = $name;
         $this->required = $required;
         $this->placeholder = $placeholder;
         $this->value = $value;
         $this->model = $model;
+        $this->readonly = $readonly;
     }
 
     public function setSelected($value): void
@@ -35,6 +37,7 @@ class ModelSearch extends Component
         }
 
         $this->value = $value;
+
         $this->emitUp('updatedChild', $this->name, $this->value);
     }
 
@@ -45,10 +48,6 @@ class ModelSearch extends Component
 
     public function getResultsProperty()
     {
-        if (!$this->isOpen) {
-            return collect();
-        }
-
         return $this->model::query()
             ->when($this->search, new SearchFilter($this->search))
             ->orderBy((new $this->model)->getKeyName())

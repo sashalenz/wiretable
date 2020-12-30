@@ -5,6 +5,7 @@ namespace Sashalenz\Wiretable;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Sashalenz\Wiretable\Components\Alert;
+use Sashalenz\Wiretable\Components\Fields\DateTimeField;
 use Sashalenz\Wiretable\Components\Fields\LayoutField;
 use Sashalenz\Wiretable\Components\Fields\SelectField;
 use Sashalenz\Wiretable\Components\Fields\TextField;
@@ -12,6 +13,7 @@ use Sashalenz\Wiretable\Components\Form;
 use Sashalenz\Wiretable\Components\Modal;
 use Sashalenz\Wiretable\Components\Table;
 use Sashalenz\Wiretable\Livewire\ModelSearch;
+use Sashalenz\Wiretable\Livewire\SingleImage;
 
 class WiretableServiceProvider extends ServiceProvider
 {
@@ -44,10 +46,12 @@ class WiretableServiceProvider extends ServiceProvider
             Alert::class,
             LayoutField::class,
             TextField::class,
-            SelectField::class
+            SelectField::class,
+            DateTimeField::class
         ]);
 
         Livewire::component('model-search', ModelSearch::class);
+        Livewire::component('single-image', SingleImage::class);
     }
 
     public function register(): void

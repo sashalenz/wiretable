@@ -241,6 +241,7 @@ abstract class Column extends Component
                 ->render()
                 ->with([
                     'id' => $row->{$row->getKeyName()},
+                    'name' => $this->getName(),
                     'data' => $row->{$this->getName()},
                     'row' => $row
                 ]);

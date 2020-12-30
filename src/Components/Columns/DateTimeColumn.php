@@ -12,7 +12,7 @@ class DateTimeColumn extends Column
     public function __construct($name)
     {
         parent::__construct($name);
-        $this->class('whitespace-no-wrap');
+        $this->class('whitespace-nowrap text-gray-500');
     }
 
     /**

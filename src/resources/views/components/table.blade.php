@@ -77,7 +77,9 @@
 
     <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-            <table class="min-w-full">
+            <table class="min-w-full"
+                   x-data="{ moving: false }"
+            >
                 <thead>
                 <tr>
                     @foreach($this->columns as $column)
@@ -87,9 +89,38 @@
                     @endforeach
                 </tr>
                 </thead>
-                <tbody class="bg-white xl:text-base text-sm leading-6 md:leading-5 text-gray-700">
+                <tbody class="bg-white xl:text-base text-sm leading-6 md:leading-5 text-gray-700"
+                       @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
+                       x-on:drop="
+                            moving = false
+                            const id = event.dataTransfer.getData('text/plain');
+                            const target = event.target.closest('tr');
+                            $wire.call('updateRowSort', id, target.dataset.id);
+                       "
+                       x-on:drop.prevent="
+                            const id = event.dataTransfer.getData('text/plain');
+                            const target = event.target.closest('tr');
+                            const element = document.getElementById('row-'+id);
+                            target.before(element);
+                       "
+                       x-on:dragover.prevent="moving = true"
+                       x-on:dragleave.prevent="moving = false"
+                        @endif
+                >
                 @forelse($this->data->items() as $row)
-                    <tr>
+                    <tr id="row-{{ $row->id }}"
+                        @if(method_exists($this, 'getUseSortProperty') && $this->useSort)
+                        draggable="true"
+                        data-id="{{ $row->id }}"
+                        x-data="{ dragging: false }"
+                        x-on:dragend="dragging = false"
+                        x-on:dragstart.self="
+                            dragging = true;
+                            event.dataTransfer.effectAllowed = 'move';
+                            event.dataTransfer.setData('text/plain', event.target.dataset.id);
+                        "
+                            @endif
+                    >
                         @foreach($this->columns as $column)
                             <td class="p-2 md:p-4 xl:px-6 border-b border-gray-200 {{ $column->getClass($row) }}">
                                 {!! $column->renderIt($row) !!}

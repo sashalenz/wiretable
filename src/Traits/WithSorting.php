@@ -6,24 +6,26 @@ use Sashalenz\Wiretable\Components\Columns\Column;
 
 trait WithSorting
 {
-    protected string $defaultSort = '-id';
     protected static string $sortKey = 'sort';
 
     protected function initializeWithSorting(): void
     {
-        $this->queryString[self::$sortKey] = ['except' => $this->defaultSort];
+        $this->queryString[self::$sortKey] = ['except' => $this->getDefaultSort()];
 
         $this->setSort($this->resolveSort());
     }
 
     protected function resetSort(): void
     {
-        $this->setSort($this->defaultSort);
+        $this->setSort($this->getDefaultSort());
     }
 
-    private function resolveSort()
+    private function resolveSort(): string|null
     {
-        return request()->query(self::$sortKey, $this->defaultSort);
+        info(self::$sortKey);
+        info(request()->query());
+        info($this->getQueryString());
+        return request()->query(self::$sortKey, $this->getDefaultSort());
     }
 
     private function setSort($sort): void
@@ -43,8 +45,10 @@ trait WithSorting
 
     public function sortBy($columnName): void
     {
-        // determinate sort by clicked column
-        $sort = ($this->{self::$sortKey} !== $columnName) ? $columnName : sprintf('-%s', $columnName);
+        info($columnName);
+        info($this->{self::$sortKey});
+        // determinate sort by selected column
+        $sort = ($this->getSortProperty() !== $columnName) ? $columnName : sprintf('-%s', $columnName);
 
         // call private function that setting sort
         $this->setSort($sort);
@@ -53,6 +57,13 @@ trait WithSorting
         if (method_exists($this, 'resetPage')) {
             $this->resetPage();
         }
+    }
+
+    public function getDefaultSort(): string
+    {
+        return property_exists($this, 'defaultSort')
+            ? $this->defaultSort
+            : '-' . $this->columns()->first()->getName();
     }
 
     public function getSortProperty(): string

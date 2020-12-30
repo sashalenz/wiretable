@@ -10,15 +10,17 @@ use Sashalenz\Wiretable\Components\Fields\Field;
 abstract class Wireform extends Component
 {
     protected string $layout = 'layouts.app';
+    public array $media = [];
 
     protected $listeners = [
-        'updatedChild'
+        'updatedChild',
+        'updatedMedia',
     ];
 
     public function rules(): array
     {
         return $this->fields()
-            ->filter(fn (Field $field) => $field->getRules())
+            ->filter(fn (Field $field) => $field->hasRules())
             ->mapWithKeys(fn (Field $field) => ["model.{$field->name}" => $field->getRules()])
             ->toArray();
     }
@@ -37,6 +39,7 @@ abstract class Wireform extends Component
      */
     public function updated($field): void
     {
+        info($this->rules());
         $rules = collect($this->rules())
             ->filter(fn ($value, $key) => $key === $field)
             ->mapWithKeys(fn ($rules, $key) => [
@@ -46,6 +49,8 @@ abstract class Wireform extends Component
                     ->toArray()
             ])
             ->toArray();
+
+        info($rules);
 
         if (empty($rules)) {
             return;
@@ -59,11 +64,12 @@ abstract class Wireform extends Component
 
     public function updatedChild($name, $value): void
     {
-        if (!property_exists($this, $name)) {
-            return;
-        }
+        $this->model->{$name} = $value;
+    }
 
-        $this->{$name} = $value;
+    public function updatedMedia($name, $value): void
+    {
+        $this->media[$name] = $value;
     }
 
     public function getFieldsProperty(): array
@@ -73,7 +79,10 @@ abstract class Wireform extends Component
             ->toArray();
     }
 
-    abstract protected function fields(): Collection|Fields;
+    protected function fields(): Collection
+    {
+        return collect();
+    }
 
     abstract public function getTitleProperty(): string;
 }

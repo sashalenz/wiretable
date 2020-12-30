@@ -25,12 +25,6 @@
         @endif
         @foreach($options as $key => $option)
             <option value="{{ $key }}">{{ $option }}</option>
-            {{--                    @if((isset($this, $this->{$name}) && (string) $this->name === (string) $key) || (string) $value === (string) $key)--}}
-            {{--                    selected--}}
-            {{--                    @endif--}}
-            {{--            >--}}
-            {{--                {{ $option }}--}}
-            {{--            </option>--}}
         @endforeach
     </select>
 </x-wiretable-layout-field>

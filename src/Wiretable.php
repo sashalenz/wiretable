@@ -93,7 +93,9 @@ abstract class Wiretable extends Component
         }
 
         if (method_exists($this, 'initializeWithSorting')) {
-            $builder = $builder->defaultSort($this->defaultSort)->allowedSorts(...$this->getAllowedSorts());
+            $builder = $builder
+                ->defaultSort($this->getDefaultSort())
+                ->allowedSorts(...$this->getAllowedSorts());
         }
 
         return $builder
@@ -107,41 +109,41 @@ abstract class Wiretable extends Component
                 fn (Builder $query) => $query->paginate($this->perPage)->onEachSide(1)
             );
     }
-//
+
 //    public function getPublicPropertiesDefinedBySubClass(): array
 //    {
-//        $properties = collect()
-//            ->when(
-//                method_exists($this, 'initializeWithSorting'),
-//                fn (Collection $collection) => $collection->put(
-//                    self::$sortKey,
-//                    property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : $this->defaultSort
+//        return tap(parent::getPublicPropertiesDefinedBySubClass(), function (&$props) {
+//            $props = collect($props)
+//                ->when(
+//                    method_exists($this, 'initializeWithSorting'),
+//                    fn (Collection $collection) => $collection->put(
+//                        self::$sortKey,
+//                        property_exists($this, self::$sortKey) ? $this->{self::$sortKey} : $this->getDefaultSort()
+//                    )
 //                )
-//            )
-//            ->when(
-//                method_exists($this, 'initializeWithPagination'),
-//                fn (Collection $collection) => $collection->put(
-//                    self::$pageKey,
-//                    property_exists($this, self::$pageKey) ? $this->{self::$pageKey} : 1
+//                ->when(
+//                    method_exists($this, 'initializeWithPagination'),
+//                    fn (Collection $collection) => $collection->put(
+//                        self::$pageKey,
+//                        property_exists($this, self::$pageKey) ? $this->{self::$pageKey} : 1
+//                    )
 //                )
-//            )
-//            ->when(
-//                method_exists($this, 'initializeWithSearching'),
-//                fn (Collection $collection) => $collection->put(
-//                    self::$searchKey,
-//                    property_exists($this, self::$searchKey) ? $this->{self::$searchKey} : ''
+//                ->when(
+//                    method_exists($this, 'initializeWithSearching'),
+//                    fn (Collection $collection) => $collection->put(
+//                        self::$searchKey,
+//                        property_exists($this, self::$searchKey) ? $this->{self::$searchKey} : ''
+//                    )
 //                )
-//            )
-//            ->when(
-//                method_exists($this, 'initializeWithFiltering'),
-//                fn (Collection $collection) => $collection->put(
-//                    self::$filterKey,
-//                    property_exists($this, self::$filterKey) ? $this->{self::$filterKey} : ''
+//                ->when(
+//                    method_exists($this, 'initializeWithFiltering'),
+//                    fn (Collection $collection) => $collection->put(
+//                        self::$filterKey,
+//                        property_exists($this, self::$filterKey) ? $this->{self::$filterKey} : ''
+//                    )
 //                )
-//            )
-//            ->toArray();
-//
-//        return array_merge(parent::getPublicPropertiesDefinedBySubClass(), $properties);
+//                ->toArray();
+//        });
 //    }
 
     public function render()
